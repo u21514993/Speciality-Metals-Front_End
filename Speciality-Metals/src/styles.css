@@ -1,1 +1,21 @@
-/* You can add global styles to this file, and also import other style files */
+/* Global styles that apply to the entire application */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', 'Helvetica Neue', sans-serif;
+    background: url('../src/assets/pexels-photo-2092075.jpeg') no-repeat center center fixed;
+    background-size: 100% 100%;
+    background-attachment: fixed;
+    color: white;
+  }
+  
+  
+  .mat-typography {
+    font-family: 'Roboto', 'Helvetica Neue', sans-serif;
+    line-height: 1.5;
+    font-size: 14px;
+  }
+  
+  /* You can add additional global styles here */
+  
