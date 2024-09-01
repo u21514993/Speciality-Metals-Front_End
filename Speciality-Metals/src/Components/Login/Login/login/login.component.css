@@ -1,0 +1,52 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: url('../../../../assets/metal-texture-background-with-rivets_1048-8018.jpg') no-repeat center center fixed; /* Full background image */
+    background-size: cover;
+    color: white;
+  }
+  
+  .login-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    text-align: center;
+  }
+  
+  .welcome-heading {
+    font-size: 36px;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+  }
+  
+  .login-card {
+    width: 450px;
+    padding: 30px;
+    background: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+    color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+  }
+  
+  .full-width {
+    width: 100%;
+  }
+  
+  .login-button {
+    width: 100%;
+    margin-top: 20px;
+  }
+  
+  mat-card-footer {
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  .footer-text {
+    font-size: 14px;
+    color: #ccc;
+  }
+  
