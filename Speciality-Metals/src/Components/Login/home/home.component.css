@@ -1,0 +1,42 @@
+.home-container {
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    width: 100%;
+  }
+  
+  .menu-card {
+    flex: 1;
+    margin: 0 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: black; /* Make the card background transparent */
+    box-shadow: none; /* Remove the shadow */
+  }
+  
+  .menu-button {
+    width: 100%;
+    height: 80px; /* Increase button height */
+    font-size: 18px; /* Increase font size */
+    background-color: black;
+    color: white;
+    border-radius: 8px;
+  }
+  
+  .menu-button mat-icon {
+    margin-right: 8px;
+    font-size: 24px; /* Adjust icon size */
+  }
+  
+  .spacer {
+    flex: 1 1 auto;
+  }
+  
