@@ -7,6 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { ReactiveFormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -21,9 +22,9 @@ import { ReactiveFormsModule } from '@angular/forms';
     MatCardModule,
     ReactiveFormsModule,
     LoginComponent,
-    AppComponent
+    AppComponent, 
   ],
-  providers: [],
+  providers: [HttpClient],
   bootstrap: [] // Or whatever your root component is
 })
 export class AppModule { }

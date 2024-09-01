@@ -49,4 +49,9 @@ body, html {
     font-size: 14px;
     color: #ccc;
   }
+  .error-message {
+    color: red;
+    margin-bottom: 15px;
+    font-weight: bold;
+  }
   
