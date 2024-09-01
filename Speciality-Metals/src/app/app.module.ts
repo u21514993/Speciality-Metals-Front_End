@@ -8,7 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-
+import { EmployeeComponent } from '../Components/Login/employee/employee.component';
 @NgModule({
   declarations: [
     
