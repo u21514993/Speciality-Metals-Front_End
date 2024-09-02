@@ -1,1 +1,25 @@
-<p>add-customer works!</p>
+<mat-toolbar color="primary">
+    <span class="heading">Speciality Metals</span>
+    <span class="spacer"></span>
+    <a mat-button color="warn" routerLink="/logout">Log out</a>
+    <img class="photo" src=".../src/assets/Special_Metals_Corporation_logo.svg.png">
+  </mat-toolbar>
+  
+  <div class="customer-container">
+    <form [formGroup]="CustomerForm" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Customer Name</mat-label>
+            <input matInput placeholder="Enter customer name" formControlName="customer_Name" />
+          </mat-form-field>
+          
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Phone Number</mat-label>
+            <input matInput placeholder="Enter phone number" type="tel" formControlName="phone_Number" />
+          </mat-form-field>
+  
+      <div class="form-actions">
+        <button mat-raised-button color="primary" type="submit">Add Customer</button>
+        <button mat-raised-button color="warn" type="button" (click)="onCancel()">Cancel</button>
+      </div>
+    </form>
+  </div>

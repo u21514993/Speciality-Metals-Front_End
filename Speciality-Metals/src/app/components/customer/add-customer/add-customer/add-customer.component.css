@@ -1,0 +1,63 @@
+mat-toolbar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.heading {
+  font-size: 24px;
+  font-weight: 400;
+  color: black;
+}
+
+.spacer {
+  flex-grow: 1;
+}
+
+/* Logo Styling */
+.photo {
+  height: 40px;
+  margin-left: 10px;
+}
+
+/* Form Container Styling */
+.customer-container {
+  max-width: 600px;
+  margin: 50px auto;
+  padding: 30px;
+  background-color: #fefefe;
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  background-image: url('/src/assets/Special_Metals_Corporation_logo.svg.png');
+  background-size: cover;
+}
+
+/* Form Field Styling */
+mat-form-field.full-width {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+input[matInput] {
+  font-size: 16px;
+  padding: 10px;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+}
+
+/* Form Actions (Buttons) Styling */
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+button[mat-raised-button] {
+  font-size: 16px;
+  padding: 10px 20px;
+  text-transform: uppercase;
+  border-radius: 4px;
+}
