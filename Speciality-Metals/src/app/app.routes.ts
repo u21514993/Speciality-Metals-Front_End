@@ -1,45 +1,50 @@
 import { Routes } from '@angular/router';
-import { LoginComponent } from '../Components/Login/Login/login/login.component';  // Adjust the path as necessary
-import { HomeComponent } from '../Components/Login/home/home.component';
-import { EmployeeComponent } from '../Components/Login/employee/employee.component';
-import { ProductsComponent } from '../Components/Login/products/products.component';
-import { ReportingComponent } from '../Components/reporting/reporting.component';
-import { OutgoingComponent } from '../Components/outgoing/outgoing.component';
-import { SupplierComponent } from '../Components/supplier/supplier.component';
-import { IncomingComponent } from '../Components/incoming/incoming.component';
-import { EmployeeHomeComponent } from '../Components/Login/employee/employee-home/employee-home.component';
-import { AddEmployeeComponent } from '../Components/Login/employee/add-employee/add-employee.component';
-import { AddSupplierComponent } from '../Components/supplier/add-supplier/add-supplier.component';
-import { ViewSupplierComponent } from '../Components/supplier/view-supplier/view-supplier.component';
-import { ViewProductsComponent } from '../Components/Login/products/view-products/view-products.component';
-import { AddProductComponent } from '../Components/Login/products/add-products/add-products.component';
+import { LoginComponentComponent } from './components/login/login-component/login-component/login-component.component'; // Adjust the path as necessary
+import { HomeComponentComponent } from './components/login/login-component/home-component/home-component/home-component.component';
+import { EmployeeHomeComponent } from './components/employee/employee-home/employee-home/employee-home.component';
+import { ProductsHomeComponent } from './components/products/products-home/products-home/products-home.component';
+import { ReportingComponentComponent } from './components/reporting/reporting-component/reporting-component.component';
+import { OutgoingComponentComponent } from './components/outgoing/outgoing-component/outgoing-component.component';
+import { SupplierHomeComponent } from './components/supplier/supplier-home/supplier-home/supplier-home.component';
+import { IncomingComponentComponent } from './components/incoming/incoming-component/incoming-component.component';
+import { AddEmployeeComponent } from './components/employee/add-employee/add-employee/add-employee.component';
+import { AddSupplierComponent } from './components/supplier/add-supplier/add-supplier/add-supplier.component';
+import { ViewSupplierComponent } from './components/supplier/view-supplier/view-supplier/view-supplier.component';
+import { ViewProductsComponent } from './components/products/view-products/view-products/view-products.component';
+import { AddProductsComponent } from './components/products/add-products/add-products/add-products.component';
+import { CustomerHomeComponent } from './components/customer/customer-home/customer-home/customer-home.component';
+import { AddCustomerComponent } from './components/customer/add-customer/add-customer/add-customer.component';
+import { ViewCustomerComponent } from './components/customer/view-customer/view-customer/view-customer.component';
+import { ViewEmployeeComponent } from './components/employee/view-employee/view-employee/view-employee.component';
+import { GenerateEmployeeCodeComponent } from './components/login/login-component/generate-employee-code/generate-employee-code/generate-employee-code.component';
+
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },  // Default route
-  { path: 'login', component: LoginComponent }    ,       // Route to LoginComponent
+  { path: 'login', component: LoginComponentComponent }    ,       // Route to LoginComponent
 
 
   { path: '', redirectTo: 'login', pathMatch: 'full' },  // Default route
-  { path: 'home', component: HomeComponent } ,
+  { path: 'home', component: HomeComponentComponent } ,
   
   { path: '', redirectTo: 'login', pathMatch: 'full' },  // Default route
-  { path: 'employee', component: EmployeeComponent } ,    
+  { path: 'employee', component: EmployeeHomeComponent } ,    
   
   { path: '', redirectTo: 'login', pathMatch: 'full' },  // Default route
-  { path: 'products', component: ProductsComponent } ,
+  { path: 'products', component: ProductsHomeComponent } ,
   
   { path: '', redirectTo: 'login', pathMatch: 'full' },  // Default route
-  { path: 'reporting', component: ReportingComponent },
+  { path: 'reporting', component: ReportingComponentComponent },
   
   { path: '', redirectTo: 'login', pathMatch: 'full' },  // Default route
-  { path: 'outgoing', component: OutgoingComponent },     
+  { path: 'outgoing', component: OutgoingComponentComponent },     
   
   { path: '', redirectTo: 'login', pathMatch: 'full' },  // Default route
-  { path: 'supplier', component: SupplierComponent },     
+  { path: 'supplier', component: SupplierHomeComponent },     
   
   
   { path: '', redirectTo: 'login', pathMatch: 'full' },  // Default route
-  { path: 'incoming', component: IncomingComponent },    
+  { path: 'incoming', component: IncomingComponentComponent },    
 
   { path: '', redirectTo: 'login', pathMatch: 'full' },  // Default route
   { path: 'employee-home', component: EmployeeHomeComponent },   
@@ -57,7 +62,7 @@ export const routes: Routes = [
   { path: 'view-products', component: ViewProductsComponent },  
 
   { path: '', redirectTo: 'login', pathMatch: 'full' },  // Default route
-  { path: 'add-products', component: AddProductComponent },  
+  { path: 'add-products', component: AddProductsComponent },  
   
   // Route to LoginComponent
 ];
