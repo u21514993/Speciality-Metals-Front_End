@@ -1,1 +1,23 @@
-<p>supplier works!</p>
+<mat-toolbar color="primary">
+    <span class="heading">Speciality Metals</span>
+    <span class="spacer"></span>
+    <a mat-button color="warn" routerLink="/logout">Log out</a>
+    <img class="photo"  src=".../src/assets/Special_Metals_Corporation_logo.svg.png">
+  </mat-toolbar>
+  
+  <div class="home-container">
+    
+    <mat-card class="menu-card">
+      <button mat-raised-button class="menu-button" routerLink="/add-supplier" >
+        <mat-icon>event_note</mat-icon> Add supplier  
+      </button>
+    </mat-card>
+    
+    <mat-card class="menu-card">
+      <button mat-raised-button class="menu-button" routerLink="/view-supplier" >
+        <mat-icon>person</mat-icon> View supplier 
+      </button>
+    </mat-card>
+    
+    
+  </div>

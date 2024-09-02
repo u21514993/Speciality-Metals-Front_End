@@ -1,4 +1,4 @@
-export interface supplier {
+export interface Supplier {
   supplier_Name?: string;
   phone_Number?: number;
   supplierID?: number;

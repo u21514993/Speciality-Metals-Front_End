@@ -1,4 +1,4 @@
-.employee-container {
+.product-container {
     max-width: 600px;
     margin: 0 auto;
     padding: 20px;
@@ -15,11 +15,14 @@
   mat-form-field {
     width: 100%;
   }
+  
   .spacer {
     flex: 1 1 auto;
     text-align: center;
   }
   
-  .photo{
-    font-size: 20;
+  .photo {
+    height: 40px;
+    margin-left: 10px;
   }
+  

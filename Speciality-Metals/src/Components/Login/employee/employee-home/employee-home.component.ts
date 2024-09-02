@@ -7,18 +7,18 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { RouterModule } from '@angular/router';
 @Component({
-  selector: 'app-supplier',
+  selector: 'app-employee-home',
   standalone: true,
-  imports: [     CommonModule,
+  imports: [ CommonModule,
     MatButtonModule,
     MatCardModule,
     MatToolbarModule,
     MatIconModule,
     MatSnackBarModule,
-    RouterModule ],
-  templateUrl: './supplier.component.html',
-  styleUrl: './supplier.component.css'
+    RouterModule],
+  templateUrl: './employee-home.component.html',
+  styleUrl: './employee-home.component.css'
 })
-export class SupplierComponent {
+export class EmployeeHomeComponent {
 
 }

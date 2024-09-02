@@ -7,6 +7,12 @@ import { ReportingComponent } from '../Components/reporting/reporting.component'
 import { OutgoingComponent } from '../Components/outgoing/outgoing.component';
 import { SupplierComponent } from '../Components/supplier/supplier.component';
 import { IncomingComponent } from '../Components/incoming/incoming.component';
+import { EmployeeHomeComponent } from '../Components/Login/employee/employee-home/employee-home.component';
+import { AddEmployeeComponent } from '../Components/Login/employee/add-employee/add-employee.component';
+import { AddSupplierComponent } from '../Components/supplier/add-supplier/add-supplier.component';
+import { ViewSupplierComponent } from '../Components/supplier/view-supplier/view-supplier.component';
+import { ViewProductsComponent } from '../Components/Login/products/view-products/view-products.component';
+import { AddProductComponent } from '../Components/Login/products/add-products/add-products.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },  // Default route
@@ -34,6 +40,24 @@ export const routes: Routes = [
   
   { path: '', redirectTo: 'login', pathMatch: 'full' },  // Default route
   { path: 'incoming', component: IncomingComponent },    
+
+  { path: '', redirectTo: 'login', pathMatch: 'full' },  // Default route
+  { path: 'employee-home', component: EmployeeHomeComponent },   
+
+  { path: '', redirectTo: 'login', pathMatch: 'full' },  // Default route
+  { path: 'add-employee', component: AddEmployeeComponent },   
+
+  { path: '', redirectTo: 'login', pathMatch: 'full' },  // Default route
+  { path: 'add-supplier', component: AddSupplierComponent },  
+
+  { path: '', redirectTo: 'login', pathMatch: 'full' },  // Default route
+  { path: 'view-supplier', component: ViewSupplierComponent },  
+
+  { path: '', redirectTo: 'login', pathMatch: 'full' },  // Default route
+  { path: 'view-products', component: ViewProductsComponent },  
+
+  { path: '', redirectTo: 'login', pathMatch: 'full' },  // Default route
+  { path: 'add-products', component: AddProductComponent },  
   
   // Route to LoginComponent
 ];
