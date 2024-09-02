@@ -63,6 +63,9 @@ export const routes: Routes = [
 
   { path: '', redirectTo: 'login', pathMatch: 'full' },  // Default route
   { path: 'add-products', component: AddProductsComponent },  
+
+  { path: '', redirectTo: 'login', pathMatch: 'full' },  // Default route
+  { path: 'customer', component: CustomerHomeComponent },  
   
   // Route to LoginComponent
 ];
