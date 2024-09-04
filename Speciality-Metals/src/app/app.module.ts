@@ -9,9 +9,13 @@ import { MatCardModule } from '@angular/material/card';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { EmployeeHomeComponent } from './components/employee/employee-home/employee-home/employee-home.component';
+import { MatToolbar, MatToolbarModule } from '@angular/material/toolbar';
+import { MatIcon, MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MaterialModule } from './shared/material.module';
+
 @NgModule({
   declarations: [
-    
     // Add your components here
   ],
   imports: [
@@ -22,9 +26,16 @@ import { EmployeeHomeComponent } from './components/employee/employee-home/emplo
     MatCardModule,
     ReactiveFormsModule,
     LoginComponentComponent,
-    AppComponent, 
+    AppComponent,
+    MatToolbarModule,
+    MatButtonModule,
+    MatIconModule,
+    MatMenuModule,
+    MatToolbarModule,
+    MatToolbar,
+    MatIcon,
   ],
   providers: [HttpClient],
-  bootstrap: [] // Or whatever your root component is
+  bootstrap: [], // Or whatever your root component is
 })
-export class AppModule { }
+export class AppModule {}
