@@ -1,0 +1,25 @@
+.app-title {
+    font-size: 24px;
+    font-weight: bold;
+    letter-spacing: 1px;
+  }
+  
+  .spacer {
+    flex: 1 1 auto;
+  }
+  
+  a.mat-button {
+    color: white;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  
+  a.active {
+    border-bottom: 2px solid #fff;
+  }
+  
+  mat-toolbar {
+    background-color: #3f51b5;
+    color: white;
+  }
+  

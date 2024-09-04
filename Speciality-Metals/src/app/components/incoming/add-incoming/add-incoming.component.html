@@ -1,0 +1,39 @@
+<h2 mat-dialog-title>Add Incoming Product</h2>
+<form [formGroup]="addIncomingForm" (ngSubmit)="onSubmit()">
+  <mat-form-field appearance="fill">
+    <mat-label>Gross Weight</mat-label>
+    <input matInput formControlName="gross_Weight" type="number" required />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Tare Weight</mat-label>
+    <input matInput formControlName="tare_Weight" type="number" required />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Net Weight</mat-label>
+    <input matInput formControlName="net_Weight" type="number" required />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>GRV Number</mat-label>
+    <input matInput formControlName="grV_Number" required />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Supplier ID</mat-label>
+    <input matInput formControlName="supplierID" type="number" required />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Product ID</mat-label>
+    <input matInput formControlName="productID" type="number" required />
+  </mat-form-field>
+
+  <div mat-dialog-actions>
+    <button mat-button (click)="onCancel()">Cancel</button>
+    <button mat-raised-button color="primary" type="submit" [disabled]="addIncomingForm.invalid">
+      Submit
+    </button>
+  </div>
+</form>
