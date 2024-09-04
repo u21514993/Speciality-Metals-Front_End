@@ -1,0 +1,18 @@
+<mat-dialog-content>
+    <h2>Edit Customer</h2>
+  
+    <mat-form-field>
+      <mat-label>Customer Name</mat-label>
+      <input matInput [(ngModel)]="customer.customer_Name">
+    </mat-form-field>
+  
+    <mat-form-field>
+      <mat-label>Phone Number</mat-label>
+      <input matInput [(ngModel)]="customer.phone_number" type="tel">
+    </mat-form-field>
+  </mat-dialog-content>
+  
+  <mat-dialog-actions>
+    <button mat-button (click)="onCancel()">Cancel</button>
+    <button mat-raised-button color="primary" (click)="saveCustomer()">Save</button>
+  </mat-dialog-actions>
