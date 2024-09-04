@@ -1,0 +1,60 @@
+<div class="mat-elevation-z8 container">
+  <h2 class="mat-title">Incoming Records</h2>
+  <table mat-table [dataSource]="incomings" class="mat-elevation-z8" style="width: 100%; margin: 20px 0;">
+
+    <!-- ID Column -->
+    <ng-container matColumnDef="incomingID">
+      <th mat-header-cell *matHeaderCellDef> ID </th>
+      <td mat-cell *matCellDef="let incoming"> {{ incoming.incomingID }} </td>
+    </ng-container>
+
+    <!-- Date Column -->
+    <ng-container matColumnDef="incoming_Date">
+      <th mat-header-cell *matHeaderCellDef> Date </th>
+      <td mat-cell *matCellDef="let incoming"> {{ incoming.incoming_Date | date: 'shortDate' }} </td>
+    </ng-container>
+
+    <!-- Gross Weight Column -->
+    <ng-container matColumnDef="gross_Weight">
+      <th mat-header-cell *matHeaderCellDef> Gross Weight </th>
+      <td mat-cell *matCellDef="let incoming"> {{ incoming.gross_Weight }} </td>
+    </ng-container>
+
+    <!-- Tare Weight Column -->
+    <ng-container matColumnDef="tare_Weight">
+      <th mat-header-cell *matHeaderCellDef> Tare Weight </th>
+      <td mat-cell *matCellDef="let incoming"> {{ incoming.tare_Weight }} </td>
+    </ng-container>
+
+    <!-- Net Weight Column -->
+    <ng-container matColumnDef="net_Weight">
+      <th mat-header-cell *matHeaderCellDef> Net Weight </th>
+      <td mat-cell *matCellDef="let incoming"> {{ incoming.net_Weight }} </td>
+    </ng-container>
+
+    <!-- GRV Number Column -->
+    <ng-container matColumnDef="gRV_Number">
+      <th mat-header-cell *matHeaderCellDef> GRV Number </th>
+      <td mat-cell *matCellDef="let incoming"> {{ incoming.gRV_Number }} </td>
+    </ng-container>
+
+    <!-- Supplier ID Column -->
+    <ng-container matColumnDef="supplierID">
+      <th mat-header-cell *matHeaderCellDef> Supplier ID </th>
+      <td mat-cell *matCellDef="let incoming"> {{ incoming.supplierID }} </td>
+    </ng-container>
+
+    <!-- Product ID Column -->
+    <ng-container matColumnDef="productID">
+      <th mat-header-cell *matHeaderCellDef> Product ID </th>
+      <td mat-cell *matCellDef="let incoming"> {{ incoming.productID }} </td>
+    </ng-container>
+
+    <!-- Header and Row -->
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+  </table>
+
+  <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+</div>

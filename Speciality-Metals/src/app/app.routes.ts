@@ -17,57 +17,42 @@ import { AddCustomerComponent } from './components/customer/add-customer/add-cus
 import { ViewCustomerComponent } from './components/customer/view-customer/view-customer/view-customer.component';
 import { ViewEmployeeComponent } from './components/employee/view-employee/view-employee/view-employee.component';
 import { GenerateEmployeeCodeComponent } from './components/login/login-component/generate-employee-code/generate-employee-code/generate-employee-code.component';
-
+import { ViewIncomingsComponent } from './components/incoming/view-incomings/view-incomings.component';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },  // Default route
-  { path: 'login', component: LoginComponentComponent }    ,       // Route to LoginComponent
+  { path: '', redirectTo: 'login', pathMatch: 'full' }, // Default route
+  { path: 'login', component: LoginComponentComponent }, // Route to LoginComponent
 
+  { path: 'home', component: HomeComponentComponent },
 
-  { path: '', redirectTo: 'login', pathMatch: 'full' },  // Default route
-  { path: 'home', component: HomeComponentComponent } ,
-  
-  { path: '', redirectTo: 'login', pathMatch: 'full' },  // Default route
-  { path: 'employee', component: EmployeeHomeComponent } ,    
-  
-  { path: '', redirectTo: 'login', pathMatch: 'full' },  // Default route
-  { path: 'products', component: ProductsHomeComponent } ,
-  
-  { path: '', redirectTo: 'login', pathMatch: 'full' },  // Default route
+  { path: 'employee', component: EmployeeHomeComponent },
+
+  { path: 'products', component: ProductsHomeComponent },
+
   { path: 'reporting', component: ReportingComponentComponent },
-  
-  { path: '', redirectTo: 'login', pathMatch: 'full' },  // Default route
-  { path: 'outgoing', component: OutgoingComponentComponent },     
-  
-  { path: '', redirectTo: 'login', pathMatch: 'full' },  // Default route
-  { path: 'supplier', component: SupplierHomeComponent },     
-  
-  
-  { path: '', redirectTo: 'login', pathMatch: 'full' },  // Default route
-  { path: 'incoming', component: IncomingComponentComponent },    
 
-  { path: '', redirectTo: 'login', pathMatch: 'full' },  // Default route
-  { path: 'employee-home', component: EmployeeHomeComponent },   
+  { path: 'outgoing', component: OutgoingComponentComponent },
 
-  { path: '', redirectTo: 'login', pathMatch: 'full' },  // Default route
-  { path: 'add-employee', component: AddEmployeeComponent },   
+  { path: 'supplier', component: SupplierHomeComponent },
 
-  { path: '', redirectTo: 'login', pathMatch: 'full' },  // Default route
-  { path: 'add-supplier', component: AddSupplierComponent },  
+  { path: 'incoming', component: IncomingComponentComponent },
 
-  { path: '', redirectTo: 'login', pathMatch: 'full' },  // Default route
-  { path: 'view-supplier', component: ViewSupplierComponent },  
+  { path: 'employee-home', component: EmployeeHomeComponent },
 
-  { path: '', redirectTo: 'login', pathMatch: 'full' },  // Default route
-  { path: 'view-products', component: ViewProductsComponent },  
+  { path: 'add-employee', component: AddEmployeeComponent },
 
-  { path: '', redirectTo: 'login', pathMatch: 'full' },  // Default route
-  { path: 'add-products', component: AddProductsComponent },  
+  { path: 'add-supplier', component: AddSupplierComponent },
 
-  { path: 'customer', component: CustomerHomeComponent },  
-  { path: 'add-customer', component: AddCustomerComponent },  
-  { path: 'view-customer', component: ViewCustomerComponent },  
-  
-  
+  { path: 'view-supplier', component: ViewSupplierComponent },
+
+  { path: 'view-products', component: ViewProductsComponent },
+
+  { path: 'add-products', component: AddProductsComponent },
+
+  { path: 'customer', component: CustomerHomeComponent },
+  { path: 'add-customer', component: AddCustomerComponent },
+  { path: 'view-customer', component: ViewCustomerComponent },
+
+  { path: 'view-incomings', component: ViewIncomingsComponent }
   // Route to LoginComponent
 ];
