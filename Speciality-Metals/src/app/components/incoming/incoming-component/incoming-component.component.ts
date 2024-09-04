@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-incoming-component',
@@ -8,5 +9,10 @@ import { Component } from '@angular/core';
   styleUrl: './incoming-component.component.css'
 })
 export class IncomingComponentComponent {
+  constructor(private router: Router) {}
+
+  goToViewIncomings(): void {
+    this.router.navigate(['/view-incomings']);
+  }
 
 }
