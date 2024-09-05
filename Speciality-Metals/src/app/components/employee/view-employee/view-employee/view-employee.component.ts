@@ -15,7 +15,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { MatTableModule } from '@angular/material/table'; // Import MatTableModule
+import { MatTableModule } from '@angular/material/table';
+
 
 @Component({
   selector: 'app-view-employee',
@@ -41,12 +42,13 @@ import { MatTableModule } from '@angular/material/table'; // Import MatTableModu
 export class ViewEmployeeComponent  implements OnInit{
   employeeForm!: FormGroup;
   employees: Staff[] = []; // Array to hold the employee data
-  displayedColumns: string[] = ['employee_Name', 'employee_Age', 'iD_Number', 'employee_Code', 'employee_Type_ID']; // Columns to be displayed
+  displayedColumns: string[] = ['employee_Name', 'employee_Age', 'iD_Number', 'employee_Code', 'employee_Type_Name']; // Replace employee_Type_ID with employee_Type_Name
   employeeTypes = [
     { id: 1, name: 'Owner' },
     { id: 2, name: 'Employee' },
     { id: 3, name: 'Admin' }
   ];
+
   constructor(
     private fb: FormBuilder,
     private staffService: AuthService,
@@ -85,9 +87,19 @@ export class ViewEmployeeComponent  implements OnInit{
   private loadEmployees(): void {
     this.staffService.getAllStaff().subscribe({
       next: (data) => {
-        this.employees = data;
+        // Map the employee_Type_ID to the corresponding name
+        this.employees = data.map(employee => ({
+          ...employee,
+          employee_Type_Name: this.getEmployeeTypeName(employee.employee_Type_ID)
+        }));
       },
       error: () => this.snackBar.open('Failed to load employees', 'Close', { duration: 3000 })
     });
+  }
+
+  // Function to get the employee type name
+  getEmployeeTypeName(employee_Type_ID: number): string {
+    const type = this.employeeTypes.find(et => et.id === employee_Type_ID);
+    return type ? type.name : 'Unknown';
   }
 }

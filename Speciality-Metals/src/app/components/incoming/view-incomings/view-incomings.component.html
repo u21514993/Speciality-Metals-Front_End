@@ -1,18 +1,67 @@
-<div class="incoming-container mat-elevation-z8">
+<div class="incoming-container">
   <div class="page-header">
-    <h1 class="mat-display-1">Incoming Products</h1>
-    <p>
-      This page lists all the incoming products. You can add, update, or delete
-      incoming records.
+    <h1>Incoming Products</h1>
+    <p class="page-description">
+      This page lists all the incoming products. You can add, update, or delete incoming records.
     </p>
   </div>
 
-  <!-- Action Buttons -->
-  <div class="action-buttons">
-    <button class="btn-add mat-raised-button mat-primary" (click)="toggleAddForm()">
-      <mat-icon>add_circle</mat-icon> Add Incoming Product
-    </button>
-  </div>
+  <!-- Form Fields -->
+  <form [formGroup]="addIncomingForm" (ngSubmit)="onAddSubmit()" class="incoming-form">
+    <!-- First row of inputs -->
+    <div class="input-row">
+      <div class="form-group">
+        <label for="company_Code">Company Code</label>
+        <input id="company_Code" formControlName="company_Code" type="text" />
+      </div>
+      <div class="form-group">
+        <label for="grV_Number">GRV Number</label>
+        <input id="grV_Number" formControlName="grV_Number" type="text" />
+      </div>
+      <div class="form-group">
+        <button class="btn-primary" type="button">Search</button>
+      </div>
+    </div>
+
+    <!-- Second row of inputs -->
+    <div class="input-row">
+      <div class="form-group">
+        <label for="comments">Comments</label>
+        <input id="comments" formControlName="comments" type="text" />
+      </div>
+      <div class="form-group">
+        <label for="delivery_Note">Delivery Note</label>
+        <input id="delivery_Note" formControlName="delivery_Note" type="text" />
+      </div>
+    </div>
+
+    <!-- Third row: Gross, Tare, Net -->
+    <div class="input-row">
+      <div class="form-group">
+        <label for="gross_Weight">Gross</label>
+        <input id="gross_Weight" formControlName="gross_Weight" type="number" />
+      </div>
+      <div class="form-group">
+        <label for="tare_Weight">Tare</label>
+        <input id="tare_Weight" formControlName="tare_Weight" type="number" />
+      </div>
+      <div class="form-group">
+        <label for="net_Weight">Net</label>
+        <input id="net_Weight" formControlName="net_Weight" type="number" />
+      </div>
+    </div>
+
+    <!-- Add and Label buttons in the next row -->
+    <div class="input-row">
+      <div class="form-group">
+        <button class="btn-primary" type="button">Add</button>
+      </div>
+      <div class="form-group">
+        <button class="btn-secondary" type="button">Label</button>
+      </div>
+    </div>
+  </form>
+</div>
 
   <!-- Incoming Products Table -->
   <h2 class="mat-title">Incoming Records</h2>
@@ -85,4 +134,4 @@
 
   <!-- Paginator -->
   <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
-</div>
+
