@@ -5,7 +5,6 @@
     <img class="photo"  src=".../src/assets/Special_Metals_Corporation_logo.svg.png">
   </mat-toolbar>
   <div>
-    <!-- Employee List Table -->
     <div class="employee-list">
       <h2>Employee List</h2>
       <table mat-table [dataSource]="employees" class="mat-elevation-z8">
@@ -13,30 +12,29 @@
           <th mat-header-cell *matHeaderCellDef> Name </th>
           <td mat-cell *matCellDef="let element"> {{element.employee_Name}} </td>
         </ng-container>
-  
+    
         <ng-container matColumnDef="employee_Age">
           <th mat-header-cell *matHeaderCellDef> Age </th>
           <td mat-cell *matCellDef="let element"> {{element.employee_Age}} </td>
         </ng-container>
-  
+    
         <ng-container matColumnDef="iD_Number">
           <th mat-header-cell *matHeaderCellDef> ID Number </th>
           <td mat-cell *matCellDef="let element"> {{element.iD_Number}} </td>
         </ng-container>
-  
+    
         <ng-container matColumnDef="employee_Code">
           <th mat-header-cell *matHeaderCellDef> Code </th>
           <td mat-cell *matCellDef="let element"> {{element.employee_Code}} </td>
         </ng-container>
-  
-        <ng-container matColumnDef="employee_Type_ID">
-          <th mat-header-cell *matHeaderCellDef> Type ID </th>
-          <td mat-cell *matCellDef="let element"> {{element.employee_Type_ID}} </td>
+    
+        <ng-container matColumnDef="employee_Type_Name">
+          <th mat-header-cell *matHeaderCellDef> Type </th>
+          <td mat-cell *matCellDef="let element"> {{element.employee_Type_Name}} </td>
         </ng-container>
-  
+    
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
       </table>
     </div>
-  </div>
-  
+    

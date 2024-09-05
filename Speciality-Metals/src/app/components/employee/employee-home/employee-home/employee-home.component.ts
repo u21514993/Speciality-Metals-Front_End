@@ -10,6 +10,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { RouterModule } from '@angular/router';
+import { HttpClientModule } from '@angular/common/http';
 @Component({
   selector: 'app-employee-home',
   standalone: true,
@@ -18,7 +19,7 @@ import { RouterModule } from '@angular/router';
     MatCardModule,
     MatToolbarModule,
     MatIconModule,
-    MatSnackBarModule,
+    MatSnackBarModule,HttpClientModule,
     RouterModule],
   templateUrl: './employee-home.component.html',
   styleUrl: './employee-home.component.css',
