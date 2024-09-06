@@ -36,7 +36,6 @@ import {
   providers: [IncomingService],
 })
 export class ViewIncomingsComponent implements OnInit {
-  // Form to add a new incoming product
   addIncomingForm!: FormGroup;
   showAddForm = false;
 
@@ -83,7 +82,7 @@ export class ViewIncomingsComponent implements OnInit {
     this.showAddForm = !this.showAddForm;
   }
 
-  //READ THE INCOMING PRODUCTS------->(R)
+  // Load incoming records
   loadIncomings(): void {
     this.incomingService.getIncomings().subscribe(
       (data: incoming[]) => {
@@ -96,7 +95,7 @@ export class ViewIncomingsComponent implements OnInit {
     );
   }
 
-  //ADD THE INCOMING PRODUCTS------>(C)
+  // Submit the form and add a new incoming record
   onAddSubmit(): void {
     if (this.addIncomingForm.valid) {
       const newIncoming: incoming = {
@@ -117,7 +116,7 @@ export class ViewIncomingsComponent implements OnInit {
     }
   }
 
-  //DELETE THE INCOMING PRODUCTS--------------->(D)
+  // Delete an incoming product
   deleteIncoming(incomingID: number): void {
     if (confirm('Are you sure you want to delete this incoming product?')) {
       this.incomingService.deleteIncoming(incomingID).subscribe(

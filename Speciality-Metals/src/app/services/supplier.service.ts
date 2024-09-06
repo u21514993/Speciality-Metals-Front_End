@@ -23,6 +23,12 @@ export class SupplierService {
   addSupplier(supplier: Supplier): Observable<Supplier> {
     return this.http.post<Supplier>(`${this.apiUrl}`, supplier);
   }
+   // Fetch the product name by supplier ID (your custom endpoint)
+   getProductNameBySupplierId(supplierId: number): Observable<string> {
+    return this.http.get<string>(`${this.apiUrl}/${supplierId}/productName`);
+  }
+
+
 
   updateSupplier(id: number, supplier: Supplier): Observable<Supplier> {
     return this.http.put<Supplier>(`${this.apiUrl}/${id}`, supplier);

@@ -6,62 +6,47 @@
     </p>
   </div>
 
-  <!-- Form Fields -->
+  <!-- Add Incoming Form -->
   <form [formGroup]="addIncomingForm" (ngSubmit)="onAddSubmit()" class="incoming-form">
     <!-- First row of inputs -->
     <div class="input-row">
       <div class="form-group">
-        <label for="company_Code">Company Code</label>
-        <input id="company_Code" formControlName="company_Code" type="text" />
+        <label for="gross_Weight">Gross Weight</label>
+        <input id="gross_Weight" formControlName="gross_Weight" type="number" />
       </div>
       <div class="form-group">
-        <label for="grV_Number">GRV Number</label>
-        <input id="grV_Number" formControlName="grV_Number" type="text" />
+        <label for="tare_Weight">Tare Weight</label>
+        <input id="tare_Weight" formControlName="tare_Weight" type="number" />
       </div>
       <div class="form-group">
-        <button class="btn-primary" type="button">Search</button>
+        <label for="net_Weight">Net Weight</label>
+        <input id="net_Weight" formControlName="net_Weight" type="number" />
       </div>
     </div>
 
     <!-- Second row of inputs -->
     <div class="input-row">
       <div class="form-group">
-        <label for="comments">Comments</label>
-        <input id="comments" formControlName="comments" type="text" />
+        <label for="grV_Number">GRV Number</label>
+        <input id="grV_Number" formControlName="grV_Number" type="text" />
       </div>
       <div class="form-group">
-        <label for="delivery_Note">Delivery Note</label>
-        <input id="delivery_Note" formControlName="delivery_Note" type="text" />
-      </div>
-    </div>
-
-    <!-- Third row: Gross, Tare, Net -->
-    <div class="input-row">
-      <div class="form-group">
-        <label for="gross_Weight">Gross</label>
-        <input id="gross_Weight" formControlName="gross_Weight" type="number" />
+        <label for="supplierID">Supplier ID</label>
+        <input id="supplierID" formControlName="supplierID" type="number" />
       </div>
       <div class="form-group">
-        <label for="tare_Weight">Tare</label>
-        <input id="tare_Weight" formControlName="tare_Weight" type="number" />
-      </div>
-      <div class="form-group">
-        <label for="net_Weight">Net</label>
-        <input id="net_Weight" formControlName="net_Weight" type="number" />
+        <label for="productID">Product ID</label>
+        <input id="productID" formControlName="productID" type="number" />
       </div>
     </div>
 
-    <!-- Add and Label buttons in the next row -->
+    <!-- Submit Button -->
     <div class="input-row">
       <div class="form-group">
-        <button class="btn-primary" type="button">Add</button>
-      </div>
-      <div class="form-group">
-        <button class="btn-secondary" type="button">Label</button>
+        <button class="btn-primary" type="submit">Add</button>
       </div>
     </div>
   </form>
-</div>
 
   <!-- Incoming Products Table -->
   <h2 class="mat-title">Incoming Records</h2>
@@ -118,7 +103,7 @@
     <ng-container matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef>Actions</th>
       <td mat-cell *matCellDef="let incoming">
-        <button mat-icon-button color="primary" >
+        <button mat-icon-button color="primary">
           <mat-icon>edit</mat-icon>
         </button>
         <button mat-icon-button color="warn" (click)="deleteIncoming(incoming.incomingID)">
@@ -134,4 +119,4 @@
 
   <!-- Paginator -->
   <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
-
+</div>
