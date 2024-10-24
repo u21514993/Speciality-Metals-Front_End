@@ -49,7 +49,7 @@ export class ViewProductsComponent implements OnInit{
   ) {
     this.editForm = this.fb.group({
       Product_Name: ['', Validators.required] // Form control for product name
-    });
+    })
   }
 
   ngOnInit(): void {
@@ -106,7 +106,7 @@ export class ViewProductsComponent implements OnInit{
         ...this.editForm.value // Merge the form values into the selected product
       };
 
-      this.productService.updateProduct(this.selectedProduct.ProductID, updatedProduct).subscribe({
+      this.productService.updateProduct(this.selectedProduct.productID, updatedProduct).subscribe({
         next: () => {
           this.snackBar.open('Product updated successfully!', 'Close', { duration: 3000 });
           this.loadProducts(); // Reload the products list after updating
