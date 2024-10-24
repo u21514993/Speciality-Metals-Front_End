@@ -1,1 +1,112 @@
-<p>outgoing-component works!</p>
+<div class="outgoing-container">
+    <div class="page-header">
+      <h1>Outgoing Products</h1>
+      <p class="page-description" id="desc">
+        This page lists all the outgoing products. You can add, update, or delete outgoing records.
+      </p>
+    </div>
+  
+    <!-- Add Outgoing Form -->
+    <form [formGroup]="addOutgoingForm" (ngSubmit)="onAddSubmit()" class="outgoing-form">
+        <div class="input-row">
+          <mat-form-field class="form-group">
+            <mat-label>Del Note</mat-label>
+            <input matInput formControlName="del_Note" type="text" />
+          </mat-form-field>
+        </div>
+        
+        <div class="input-row">
+          <mat-form-field class="form-group">
+            <mat-label>Customer ID</mat-label>
+            <input matInput formControlName="customerID" type="number" />
+          </mat-form-field>
+          <mat-form-field class="form-group">
+            <mat-label>Product ID</mat-label>
+            <input matInput formControlName="productID" type="number" />
+          </mat-form-field>
+        </div>
+        
+        <div class="input-row">
+          <mat-form-field class="form-group">
+            <mat-label>Gross Weight</mat-label>
+            <input matInput formControlName="gross_Weight" type="number" />
+          </mat-form-field>
+          <mat-form-field class="form-group">
+            <mat-label>Tare Weight</mat-label>
+            <input matInput formControlName="tare_Weight" type="number" />
+          </mat-form-field>
+          <mat-form-field class="form-group">
+            <mat-label>Net Weight</mat-label>
+            <input id="net" matInput formControlName="net_Weight" type="number" />
+          </mat-form-field>
+        </div>
+        
+        <div class="input-row">
+          <button mat-raised-button color="primary" type="submit">Add</button>
+        </div>
+      </form>
+    <div class="outgoing-container">
+        <!-- Table Headers and Add Form -->
+        
+        <h2 class="mat-title" id="table-title">Outgoing Records</h2>
+        <table mat-table [dataSource]="outgoings" class="mat-elevation-z8 product-table">
+          <ng-container matColumnDef="outgoingID">
+            <th mat-header-cell *matHeaderCellDef>ID</th>
+            <td mat-cell *matCellDef="let outgoing">{{ outgoing.outgoingID }}</td>
+          </ng-container>
+      
+          <ng-container matColumnDef="outgoing_Date">
+            <th mat-header-cell *matHeaderCellDef>Date</th>
+            <td mat-cell *matCellDef="let outgoing">{{ outgoing.outgoing_Date | date: 'shortDate' }}</td>
+          </ng-container>
+      
+          <ng-container matColumnDef="gross_Weight">
+            <th mat-header-cell *matHeaderCellDef>Gross Weight</th>
+            <td mat-cell *matCellDef="let outgoing">{{ outgoing.gross_Weight }}</td>
+          </ng-container>
+      
+          <ng-container matColumnDef="tare_Weight">
+            <th mat-header-cell *matHeaderCellDef>Tare Weight</th>
+            <td mat-cell *matCellDef="let outgoing">{{ outgoing.tare_Weight }}</td>
+          </ng-container>
+      
+          <ng-container matColumnDef="net_Weight">
+            <th mat-header-cell *matHeaderCellDef>Net Weight</th>
+            <td mat-cell *matCellDef="let outgoing">{{ outgoing.net_Weight }}</td>
+          </ng-container>
+      
+          <ng-container matColumnDef="del_Note">
+            <th mat-header-cell *matHeaderCellDef>Del Note</th>
+            <td mat-cell *matCellDef="let outgoing">{{ outgoing.del_Note }}</td>
+          </ng-container>
+      
+          <!-- Update the variable to outgoing.customerName -->
+          <ng-container matColumnDef="customerName">
+            <th mat-header-cell *matHeaderCellDef>Customer Name</th>
+            <td mat-cell *matCellDef="let outgoing">{{ outgoing.customerName }}</td>
+          </ng-container>
+      
+          <!-- Update the variable to outgoing.productName -->
+          <ng-container matColumnDef="productName">
+            <th mat-header-cell *matHeaderCellDef>Product Name</th>
+            <td mat-cell *matCellDef="let outgoing">{{ outgoing.productName }}</td>
+          </ng-container>
+      
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Actions</th>
+            <td mat-cell *matCellDef="let outgoing">
+              <button mat-icon-button color="primary">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="deleteOutgoings(outgoing.outgoingID)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+      
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+      
+        <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+      </div>

@@ -5,6 +5,6 @@ export interface outgoing {
   tare_Weight?: number;
   net_Weight?: number;
   del_Note?: string;
-  supplierID?: number;
+  customerID?: number;
   productID?: number;
 }

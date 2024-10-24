@@ -13,6 +13,7 @@ import { MatToolbar, MatToolbarModule } from '@angular/material/toolbar';
 import { MatIcon, MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MaterialModule } from './shared/material.module';
+import { HttpClientModule, provideHttpClient, withFetch } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -34,8 +35,9 @@ import { MaterialModule } from './shared/material.module';
     MatToolbarModule,
     MatToolbar,
     MatIcon,
+    HttpClientModule,
   ],
-  providers: [HttpClient],
+  providers: [HttpClient, provideHttpClient(withFetch())],
   bootstrap: [], // Or whatever your root component is
 })
 export class AppModule {}

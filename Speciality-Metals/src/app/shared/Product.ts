@@ -1,7 +1,4 @@
 export interface Product {
-product_Name: any;
-    ProductID: number;
-    Product_Name: string;
-
-  }
-  
+  productID: number;      // Changed from ProductID to match API
+  product_Name: string;   // Changed from Product_Name to match API
+}
