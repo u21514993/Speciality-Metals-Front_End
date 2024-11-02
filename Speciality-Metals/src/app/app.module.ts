@@ -7,13 +7,14 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { ReactiveFormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';  // Only import HttpClientModule here
 import { EmployeeHomeComponent } from './components/employee/employee-home/employee-home/employee-home.component';
-import { MatToolbar, MatToolbarModule } from '@angular/material/toolbar';
-import { MatIcon, MatIconModule } from '@angular/material/icon';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MaterialModule } from './shared/material.module';
-import { HttpClientModule, provideHttpClient, withFetch } from '@angular/common/http';
+
+
 
 @NgModule({
   declarations: [
@@ -26,18 +27,13 @@ import { HttpClientModule, provideHttpClient, withFetch } from '@angular/common/
     MatButtonModule,
     MatCardModule,
     ReactiveFormsModule,
-    LoginComponentComponent,
-    AppComponent,
+    HttpClientModule,    // Only add HttpClientModule here
     MatToolbarModule,
-    MatButtonModule,
     MatIconModule,
     MatMenuModule,
-    MatToolbarModule,
-    MatToolbar,
-    MatIcon,
-    HttpClientModule,
+    MaterialModule,   
   ],
-  providers: [HttpClient, provideHttpClient(withFetch())],
+  providers: [],
   bootstrap: [], // Or whatever your root component is
 })
 export class AppModule {}
