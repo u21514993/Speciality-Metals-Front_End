@@ -3,4 +3,5 @@ export interface Supplier {
   phone_Number?: number;
   supplierID?: number;
   productID?: number;
+  supplier_Code?: string;
 }

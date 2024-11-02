@@ -1,9 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs';
-import { catchError, throwError } from 'rxjs';
-import { HttpClientModule } from '@angular/common/http';
+import { tap, catchError, throwError } from 'rxjs';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
@@ -15,6 +14,8 @@ import { outgoing } from '../../../shared/outgoing';
 import { forkJoin } from 'rxjs';
 import { customer } from '../../../shared/customer';
 import { Product } from '../../../shared/Product';
+import { ProductService } from '../../../services/product.service';
+import { CustService } from '../../../services/customer.service';
 import {
   ReactiveFormsModule,
   FormGroup,
@@ -27,7 +28,7 @@ import {
   standalone: true,
   imports: [
     CommonModule,
-    HttpClientModule,
+    HttpClientModule,  // Make sure this is included
     MatTableModule,
     MatPaginatorModule,
     MatIconModule,
@@ -36,9 +37,14 @@ import {
     MatInputModule,
     ReactiveFormsModule,
   ],
-  providers: [OutService],
+  providers: [
+    OutService,
+    CustService,    // Add CustService to providers
+    ProductService, // Add ProductService to providers
+    HttpClient     // Add HttpClient to providers
+  ],
   templateUrl: './outgoing-component.component.html',
-  styleUrls: ['./outgoing-component.component.css'] // Corrected from styleUrl to styleUrls
+  styleUrls: ['./outgoing-component.component.css']
 })
 export class OutgoingComponentComponent implements OnInit {
   addOutgoingForm!: FormGroup;
@@ -56,16 +62,22 @@ export class OutgoingComponentComponent implements OnInit {
   ];
   customerNames: { [key: number]: string } = {};
   productNames: { [key: number]: string } = {};
+  products: { [key: string]: { product_Name: string; product_Code: string } } = {};
+  customers: { [key: string]: { customer_Name: string; customer_Code: string } } = {};
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  constructor(private outgoingservice: OutService, private fb: FormBuilder) {}
+  constructor(private outgoingservice: OutService, private fb: FormBuilder, private customerService: CustService, private productService: ProductService) {}
 
   ngOnInit(): void {
+    this.loadProducts();
+    this.loadCustomers();
     this.addOutgoingForm = this.fb.group({
       del_Note: ['', Validators.required],
-      customerID: ['', Validators.required],
-      productID: ['', Validators.required],
+      customerName: ['', Validators.required],
+      customerCode: ['', Validators.required],
+      productName: ['', Validators.required],
+      productCode: ['', Validators.required],
       gross_Weight: ['', Validators.required],
       tare_Weight: ['', Validators.required],
       net_Weight: ['', Validators.required],
@@ -115,27 +127,60 @@ export class OutgoingComponentComponent implements OnInit {
     );
 }
 
-  loadOutgoings(): void {
-    this.outgoingservice.getAllOutgoing().subscribe(
-      (data: outgoing[]) => {
-        console.log('Outgoing Data:', data); // Log outgoing data
-        
-        const mappedData = data.map(outgoing => ({
-          ...outgoing,
-          customerName: this.customerNames[outgoing.customerID!] || 'Unknown',
-          productName: this.productNames[outgoing.productID!] || 'Unknown',  // Ensure productID is correct
-        }));
-  
-        console.log('Mapped Outgoing Data:', mappedData); // Log mapped data
-        this.outgoings.data = mappedData;
-        this.outgoings.paginator = this.paginator;
-      },
-      (error) => {
-        console.error('Error fetching outgoings', error);
-      }
-    );
-  }
+loadOutgoings(): void {
+  this.outgoingservice.getAllOutgoing().subscribe(
+    (data: outgoing[]) => {
+      const mappedData = data.map(outgoing => ({
+        ...outgoing,
+        customerName: this.customerNames[outgoing.customerID!] || 'Unknown',
+        customerCode: this.customers[outgoing.customerID!]?.customer_Code || 'Unknown',
+        productName: this.productNames[outgoing.productID!] || 'Unknown',
+        productCode: this.products[outgoing.productID!]?.product_Code || 'Unknown',
+      }));
+      this.outgoings.data = mappedData;
+      this.outgoings.paginator = this.paginator;
+    },
+    (error) => {
+      console.error('Error fetching outgoings', error);
+    }
+  );
+}
 
+loadProducts(): void {
+  this.productService.getAllProducts().subscribe(
+    (products) => {
+      products.forEach((product) => {
+        this.products[product.productID] = {
+          product_Name: product.product_Name,
+          product_Code: product.product_Code,
+        };
+      });
+    },
+    (error) => {
+      console.error('Error fetching products', error);
+    }
+  );
+}
+
+loadCustomers(): void {
+  this.customerService.getAllCustomers().subscribe(
+    (customers) => {
+      customers.forEach((customer) => {
+        if (customer.customerID !== undefined) {  // Ensure customerID is defined
+          this.customers[customer.customerID] = {
+            customer_Name: customer.customer_Name || 'Unknown',
+            customer_Code: customer.customer_Code || 'Unknown',
+          };
+        } else {
+          console.warn('Encountered customer with undefined customerID:', customer);
+        }
+      });
+    },
+    (error) => {
+      console.error('Error fetching customers', error);
+    }
+  );
+}
   onAddSubmit(): void {
     if (this.addOutgoingForm.valid) {
       const newOutgoing: outgoing = {
