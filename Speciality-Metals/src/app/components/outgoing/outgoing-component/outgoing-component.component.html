@@ -1,58 +1,83 @@
 <div class="outgoing-container">
-    <div class="page-header">
-      <h1>Outgoing Products</h1>
-      <p class="page-description" id="desc">
-        This page lists all the outgoing products. You can add, update, or delete outgoing records.
-      </p>
+  <div class="page-header">
+    <h1>Outgoing Products</h1>
+    <p class="page-description" id="desc">
+      This page lists all the outgoing products. You can add, update, or delete outgoing records.
+    </p>
+  </div>
+
+  <!-- Add Outgoing Form -->
+  <form [formGroup]="addOutgoingForm" (ngSubmit)="onAddSubmit()" class="outgoing-form">
+    <div class="input-row">
+      <mat-form-field class="form-group">
+        <mat-label>Del Note</mat-label>
+        <input matInput formControlName="del_Note" type="text" />
+      </mat-form-field>
     </div>
-  
-    <!-- Add Outgoing Form -->
-    <form [formGroup]="addOutgoingForm" (ngSubmit)="onAddSubmit()" class="outgoing-form">
-        <div class="input-row">
-          <mat-form-field class="form-group">
-            <mat-label>Del Note</mat-label>
-            <input matInput formControlName="del_Note" type="text" />
-          </mat-form-field>
-        </div>
-        
-        <div class="input-row">
-            <mat-form-field class="form-group">
-              <mat-label>Customer Name</mat-label>
-              <input matInput formControlName="customerName" type="text" />
-            </mat-form-field>
-            <mat-form-field class="form-group">
-              <mat-label>Customer Code</mat-label>
-              <input matInput formControlName="customerCode" type="text" />
-            </mat-form-field>
-            <mat-form-field class="form-group">
-              <mat-label>Product Name</mat-label>
-              <input matInput formControlName="productName" type="text" />
-            </mat-form-field>
-            <mat-form-field class="form-group">
-              <mat-label>Product Code</mat-label>
-              <input matInput formControlName="productCode" type="text" />
-            </mat-form-field>
-          </div>
-        
-        <div class="input-row">
-          <mat-form-field class="form-group">
-            <mat-label>Gross Weight</mat-label>
-            <input matInput formControlName="gross_Weight" type="number" />
-          </mat-form-field>
-          <mat-form-field class="form-group">
-            <mat-label>Tare Weight</mat-label>
-            <input matInput formControlName="tare_Weight" type="number" />
-          </mat-form-field>
-          <mat-form-field class="form-group">
-            <mat-label>Net Weight</mat-label>
-            <input id="net" matInput formControlName="net_Weight" type="number" />
-          </mat-form-field>
-        </div>
-        
-        <div class="input-row">
-          <button mat-raised-button color="primary" type="submit">Add</button>
-        </div>
-      </form>
+    
+    <div class="input-row">
+      <mat-form-field class="form-group">
+        <mat-label>Customer Name</mat-label>
+        <input matInput formControlName="customerName" type="text" [matAutocomplete]="customerAutoName" />
+        <mat-autocomplete #customerAutoName="matAutocomplete">
+          <mat-option *ngFor="let customer of customers" [value]="customer.customer_Name">
+            {{customer.customer_Name}}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+      
+      <mat-form-field class="form-group">
+        <mat-label>Customer Code</mat-label>
+        <input matInput formControlName="customerCode" type="text" [matAutocomplete]="customerAutoCode" />
+        <mat-autocomplete #customerAutoCode="matAutocomplete">
+          <mat-option *ngFor="let customer of customers" [value]="customer.customer_Code">
+            {{customer.customer_Code}}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+      
+      <mat-form-field class="form-group">
+        <mat-label>Product Name</mat-label>
+        <input matInput formControlName="productName" type="text" [matAutocomplete]="productAutoName" />
+        <mat-autocomplete #productAutoName="matAutocomplete">
+          <mat-option *ngFor="let product of products" [value]="product.product_Name">
+            {{product.product_Name}}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+      
+      <mat-form-field class="form-group">
+        <mat-label>Product Code</mat-label>
+        <input matInput formControlName="productCode" type="text" [matAutocomplete]="productAutoCode" />
+        <mat-autocomplete #productAutoCode="matAutocomplete">
+          <mat-option *ngFor="let product of products" [value]="product.product_Code">
+            {{product.product_Code}}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+    </div>
+    
+    <div class="input-row">
+      <mat-form-field class="form-group">
+        <mat-label>Gross Weight</mat-label>
+        <input matInput formControlName="gross_Weight" type="number" min="0" />
+      </mat-form-field>
+      
+      <mat-form-field class="form-group">
+        <mat-label>Tare Weight</mat-label>
+        <input matInput formControlName="tare_Weight" type="number" min="0" />
+      </mat-form-field>
+      
+      <mat-form-field class="form-group">
+        <mat-label>Net Weight</mat-label>
+        <input matInput formControlName="net_Weight" type="number" readonly />
+      </mat-form-field>
+    </div>
+    
+    <div class="input-row">
+      <button mat-raised-button color="primary" type="submit" [disabled]="!addOutgoingForm.valid">Add</button>
+    </div>
+  </form>
     <div class="outgoing-container">
         <!-- Table Headers and Add Form -->
         
@@ -117,4 +142,8 @@
         </table>
       
         <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+        <button mat-raised-button class="print" (click)="printTable()">
+          <mat-icon>print</mat-icon>
+          Print
+        </button>
       </div>
