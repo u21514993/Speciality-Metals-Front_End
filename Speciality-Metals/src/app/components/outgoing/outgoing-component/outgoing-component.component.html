@@ -77,6 +77,14 @@
     <div class="input-row">
       <button mat-raised-button color="primary" type="submit" [disabled]="!addOutgoingForm.valid">Add</button>
     </div>
+
+    <div class="input-row">
+      <button mat-raised-button class="print" (click)="printLabel()">
+        <mat-icon>print</mat-icon>
+        0Label
+      </button>
+    </div>
+
   </form>
     <div class="outgoing-container">
         <!-- Table Headers and Add Form -->
