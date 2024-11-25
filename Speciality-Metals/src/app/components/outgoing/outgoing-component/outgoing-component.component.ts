@@ -23,6 +23,9 @@ import {
   FormBuilder,
   Validators,
 } from '@angular/forms';
+import * as XLSX from 'xlsx';
+import * as ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'app-outgoing-component',
@@ -69,6 +72,9 @@ export class OutgoingComponentComponent implements OnInit {
   
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
+  ngAfterViewInit() {
+    this.outgoings.paginator = this.paginator;
+  }
   constructor(
     private outgoingservice: OutService,
     private fb: FormBuilder,
@@ -387,4 +393,92 @@ export class OutgoingComponentComponent implements OnInit {
     }
   }
 
+  async exportToExcel(): Promise<void> {
+    // Create workbook and worksheet
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Outgoing Products');
+  
+    // Define columns
+    worksheet.columns = [
+      { header: 'Date', key: 'date', width: 12 },
+      { header: 'Delivery Note', key: 'delNote', width: 15 },
+      { header: 'Customer Name', key: 'customerName', width: 30 },
+      { header: 'Product Name', key: 'productName', width: 30 },
+      { header: 'Gross Weight', key: 'grossWeight', width: 15 },
+      { header: 'Tare Weight', key: 'tareWeight', width: 15 },
+      { header: 'Net Weight', key: 'netWeight', width: 15 }
+    ];
+  
+    // Get visible rows from the paginator
+    const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
+    const endIndex = startIndex + this.paginator.pageSize;
+    const visibleRows = this.outgoings.filteredData.slice(startIndex, endIndex);
+  
+    // Map rows to match the worksheet structure
+    const rows = visibleRows.map(row => {
+      const customer = this.customers.find(c => c.customerID === row.customerID);
+      const product = this.products.find(p => p.productID === row.productID);
+  
+      return {
+        date: row.outgoing_Date ? new Date(row.outgoing_Date) : null,
+        delNote: row.del_Note,
+        customerName: customer?.customer_Name || '',
+        productName: product?.product_Name || '',
+        grossWeight: row.gross_Weight || 0,
+        tareWeight: row.tare_Weight || 0,
+        netWeight: row.net_Weight || 0
+      };
+    });
+  
+    worksheet.addRows(rows);
+  
+    // Style the header row cells
+    const headerRow = worksheet.getRow(1);
+    worksheet.columns.forEach((col, index) => {
+      const cell = headerRow.getCell(index + 1);
+      cell.font = { bold: true, size: 12, color: { argb: 'FFFFFF' } };
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: '4F81BD' }
+      };
+      cell.alignment = { vertical: 'middle', horizontal: 'center' };
+      cell.border = {
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        bottom: { style: 'thin' },
+        right: { style: 'thin' }
+      };
+    });
+  
+    // Style data rows
+    worksheet.eachRow((row, rowNumber) => {
+      if (rowNumber > 1) {
+        const dateCell = row.getCell(1);
+        if (dateCell.value) {
+          dateCell.numFmt = 'dd/mm/yyyy';
+        }
+  
+        [5, 6, 7].forEach(colIndex => {
+          const cell = row.getCell(colIndex);
+          cell.numFmt = '#,##0.00';
+          cell.alignment = { horizontal: 'right' };
+        });
+      }
+  
+      row.eachCell({ includeEmpty: true }, cell => {
+        cell.border = {
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          bottom: { style: 'thin' },
+          right: { style: 'thin' }
+        };
+      });
+    });
+  
+    // Generate and save file
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    saveAs(blob, `Outgoing_Products_${new Date().toISOString().split('T')[0]}.xlsx`);
+  }
 }

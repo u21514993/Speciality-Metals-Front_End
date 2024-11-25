@@ -81,7 +81,7 @@
     <div class="input-row">
       <button mat-raised-button class="print" (click)="printLabel()">
         <mat-icon>print</mat-icon>
-        0Label
+        Label
       </button>
     </div>
 
@@ -150,8 +150,17 @@
         </table>
       
         <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+        <div class="input-row">
         <button mat-raised-button class="print" (click)="printTable()">
           <mat-icon>print</mat-icon>
           Print
         </button>
+        </div>
+        <div class="input-row">
+        <button mat-raised-button class="export-excel" (click)="exportToExcel()">
+          <mat-icon>table_view</mat-icon>
+          Excel
+        </button>
+      </div>
+
       </div>
