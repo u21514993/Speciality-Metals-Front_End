@@ -150,3 +150,9 @@ mat-paginator {
     display: none;
   }
 }
+
+.export-excel {
+  margin-left: 10px;
+  background-color: #217346;  /* Excel green color */
+  color: white;
+}
