@@ -325,4 +325,66 @@ export class OutgoingComponentComponent implements OnInit {
       }, 250);
     }
   }
+
+  printLabel() {
+    // Get current date and time
+    const now = new Date();
+    const date = now.toLocaleDateString();
+    const time = now.toLocaleTimeString();
+
+    // Safely get form values with null checks
+    const productName = this.addOutgoingForm.get('productName')?.value || '';
+    const delNote = this.addOutgoingForm.get('del_Note')?.value || '';
+    const grossWeight = this.addOutgoingForm.get('gross_Weight')?.value || '0';
+    const tareWeight = this.addOutgoingForm.get('tare_Weight')?.value || '0';
+    const netWeight = this.addOutgoingForm.get('net_Weight')?.value || '0';
+
+    // Create the content for the label
+    const printContent = `
+      <div style="font-family: Arial, sans-serif; padding: 10px; width: 300px;">
+        <div style="font-size: 16px; font-weight: bold;">${productName}</div>
+        <div style="margin-top: 5px;">Del Note: ${delNote}</div>
+        <div style="margin-top: 5px;">Gross: ${grossWeight} kg</div>
+        <div style="margin-top: 5px;">Tare: ${tareWeight} kg</div>
+        <div style="margin-top: 5px;">Net: ${netWeight} kg</div>
+        <div style="margin-top: 10px; font-size: 12px;">${date} ${time}</div>
+      </div>
+    `;
+
+    // Create a new window for printing
+    const printWindow = window.open('', '_blank');
+    if (printWindow) {
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>Print Label</title>
+            <style>
+              @media print {
+                @page {
+                  size: 3in 2in;  /* Adjust size according to your label dimensions */
+                  margin: 0;
+                }
+                body {
+                  margin: 0;
+                }
+              }
+            </style>
+          </head>
+          <body>
+            ${printContent}
+            <script>
+              window.onload = function() {
+                window.print();
+                window.onafterprint = function() {
+                  window.close();
+                }
+              }
+            </script>
+          </body>
+        </html>
+      `);
+      printWindow.document.close();
+    }
+  }
+
 }
