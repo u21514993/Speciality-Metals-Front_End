@@ -18,6 +18,7 @@ import { ViewCustomerComponent } from './components/customer/view-customer/view-
 import { ViewEmployeeComponent } from './components/employee/view-employee/view-employee/view-employee.component';
 import { GenerateEmployeeCodeComponent } from './components/login/login-component/generate-employee-code/generate-employee-code/generate-employee-code.component';
 import { ViewIncomingsComponent } from './components/incoming/view-incomings/view-incomings.component';
+import { SundryComponent } from './components/Sundry/sundry/sundry.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' }, // Default route
@@ -53,6 +54,7 @@ export const routes: Routes = [
   { path: 'add-customer', component: AddCustomerComponent },
   { path: 'view-customer', component: ViewCustomerComponent },
 
-  { path: 'view-incomings', component: ViewIncomingsComponent }
+  { path: 'view-incomings', component: ViewIncomingsComponent },
+  { path: 'sundry', component: SundryComponent }
   // Route to LoginComponent
 ];
