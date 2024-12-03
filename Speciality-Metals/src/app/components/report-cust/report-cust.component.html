@@ -1,0 +1,13 @@
+<div>
+  <label for="customerSelect">Select Customer:</label>
+  <select id="customerSelect" [(ngModel)]="selectedCustomerName" (change)="fetchDeliveryNotes()">
+    <option *ngFor="let customerName of customers" [value]="customerName">{{ customerName }}</option>
+  </select>
+</div>
+
+<div *ngIf="deliveryNotes.length > 0">
+  <h3>Delivery Notes for {{ selectedCustomerName }}</h3>
+  <ul>
+    <li *ngFor="let note of deliveryNotes">{{ note.deliveryNote }}</li>
+  </ul>
+</div>
