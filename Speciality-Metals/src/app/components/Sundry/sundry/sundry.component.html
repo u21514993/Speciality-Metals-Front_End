@@ -1,0 +1,146 @@
+<div class="sundry-container">
+  <div class="page-header">
+    <h1>Sundry Products</h1>
+    <p class="page-description" id="desc">
+      This page lists all the sundry products. You can add, update, or delete sundry records.
+    </p>
+  </div>
+
+  <!-- Add Sundry Form -->
+  <form [formGroup]="addSundryForm" (ngSubmit)="onAddSubmit()" class="sundry-form">
+    <div class="input-row">
+      <mat-form-field class="form-group">
+        <mat-label>Sundry Note</mat-label>
+        <mat-select formControlName="sundry_Note_ID">
+          <mat-option *ngFor="let note of sundryNotes" [value]="note.sundry_Notes_ID">
+            {{ note.sundry_Note }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    
+    <div class="input-row">
+      <mat-form-field class="form-group">
+        <mat-label>Comments</mat-label>
+        <input matInput formControlName="comments" type="text" />
+      </mat-form-field>
+      
+      <mat-form-field class="form-group">
+        <mat-label>Product Name</mat-label>
+        <input matInput formControlName="productName" type="text" [matAutocomplete]="productAutoName" />
+        <mat-autocomplete #productAutoName="matAutocomplete">
+          <mat-option *ngFor="let product of products" [value]="product.product_Name">
+            {{product.product_Name}}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+      
+      <mat-form-field class="form-group">
+        <mat-label>Product Code</mat-label>
+        <input matInput formControlName="productCode" type="text" [matAutocomplete]="productAutoCode" />
+        <mat-autocomplete #productAutoCode="matAutocomplete">
+          <mat-option *ngFor="let product of products" [value]="product.product_Code">
+            {{product.product_Code}}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+    </div>
+    
+    <div class="input-row">
+      <mat-form-field class="form-group">
+        <mat-label>Gross Weight</mat-label>
+        <input matInput formControlName="gross_Weight" type="number" min="0" />
+      </mat-form-field>
+      
+      <mat-form-field class="form-group">
+        <mat-label>Tare Weight</mat-label>
+        <input matInput formControlName="tare_Weight" type="number" min="0" />
+      </mat-form-field>
+      
+      <mat-form-field class="form-group">
+        <mat-label>Net Weight</mat-label>
+        <input matInput formControlName="net_Weight" type="number" readonly />
+      </mat-form-field>
+    </div>
+    
+    <div class="input-row">
+      <button mat-raised-button color="primary" type="submit" [disabled]="!addSundryForm.valid">Add</button>
+    </div>
+
+    <div class="input-row">
+      <button mat-raised-button class="print" (click)="printLabel()">
+        <mat-icon>print</mat-icon>
+        Label
+      </button>
+    </div>
+  </form>
+
+  <div class="sundry-container">
+    <h2 class="mat-title" id="table-title">Sundry Records</h2>
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 product-table">
+      <ng-container matColumnDef="sundryID">
+        <th mat-header-cell *matHeaderCellDef>ID</th>
+        <td mat-cell *matCellDef="let sundry">{{ sundry.sundryID }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="productCode">
+        <th mat-header-cell *matHeaderCellDef>Product Code</th>
+        <td mat-cell *matCellDef="let sundry">{{ sundry.productCode }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="productName">
+        <th mat-header-cell *matHeaderCellDef>Product Name</th>
+        <td mat-cell *matCellDef="let sundry">{{ sundry.productName }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="gross_Weight">
+        <th mat-header-cell *matHeaderCellDef>Gross Weight</th>
+        <td mat-cell *matCellDef="let sundry">{{ sundry.gross_Weight }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="tare_Weight">
+        <th mat-header-cell *matHeaderCellDef>Tare Weight</th>
+        <td mat-cell *matCellDef="let sundry">{{ sundry.tare_Weight }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="net_Weight">
+        <th mat-header-cell *matHeaderCellDef>Net Weight</th>
+        <td mat-cell *matCellDef="let sundry">{{ sundry.net_Weight }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="time">
+        <th mat-header-cell *matHeaderCellDef>Time</th>
+        <td mat-cell *matCellDef="let sundry">{{ sundry.time }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="sundry_Date">
+        <th mat-header-cell *matHeaderCellDef>Date</th>
+        <td mat-cell *matCellDef="let sundry">{{ sundry.sundry_Date | date: 'shortDate' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="operator">
+        <th mat-header-cell *matHeaderCellDef>Operator</th>
+        <td mat-cell *matCellDef="let sundry">{{ sundry.operator }}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+    
+    <div class="input-row">
+      <button mat-raised-button class="print" (click)="printTable()">
+        <mat-icon>print</mat-icon>
+        Print
+      </button>
+    </div>
+    
+    <div class="input-row">
+      <button mat-raised-button class="export-excel" (click)="exportToExcel()">
+        <mat-icon>table_view</mat-icon>
+        Excel
+      </button>
+    </div>
+  </div>
+</div>

@@ -4,7 +4,9 @@ export interface sundry {
     gross_Weight?: number;
     tare_Weight?: number;
     net_Weight?: number;
-    supplierID?: number;
+    employeeID?: number;
     productID?: number;
+    comments?: string;
+    sundry_Note_ID: number;
   }
   
