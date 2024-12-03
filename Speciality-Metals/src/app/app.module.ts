@@ -13,7 +13,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MaterialModule } from './shared/material.module';
-
+import { ReportingComponentComponent } from './components/reporting/reporting-component/reporting-component.component';
+import { ReportCustComponent } from './components/report-cust/report-cust.component';
 
 
 @NgModule({
@@ -32,6 +33,9 @@ import { MaterialModule } from './shared/material.module';
     MatIconModule,
     MatMenuModule,
     MaterialModule,   
+    ReportingComponentComponent,
+
+    ReportCustComponent
   ],
   providers: [],
   bootstrap: [], // Or whatever your root component is
