@@ -15,7 +15,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MaterialModule } from './shared/material.module';
 import { ReportingComponentComponent } from './components/reporting/reporting-component/reporting-component.component';
 import { ReportCustComponent } from './components/report-cust/report-cust.component';
-
+import { ReportProductComponent } from './components/report-product/report-product.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +34,7 @@ import { ReportCustComponent } from './components/report-cust/report-cust.compon
     MatMenuModule,
     MaterialModule,   
     ReportingComponentComponent,
-
+    ReportProductComponent,
     ReportCustComponent
   ],
   providers: [],

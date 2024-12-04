@@ -20,12 +20,15 @@ import { GenerateEmployeeCodeComponent } from './components/login/login-componen
 import { ViewIncomingsComponent } from './components/incoming/view-incomings/view-incomings.component';
 import { SundryComponent } from './components/Sundry/sundry/sundry.component';
 import { ReportCustComponent } from './components/report-cust/report-cust.component';
+import { ReportProductComponent } from './components/report-product/report-product.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' }, // Default route
   { path: 'login', component: LoginComponentComponent }, // Route to LoginComponent
 
   { path: 'home', component: HomeComponentComponent },
+
+  { path: 'reportProduct', component: ReportProductComponent },
 
   { path: 'reportCust', component: ReportCustComponent },
 

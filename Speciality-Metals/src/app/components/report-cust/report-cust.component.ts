@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ReportCustService } from '../../services/reportcust.service';
 import { ReportCust } from '../../shared/ReportCust';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -36,32 +36,26 @@ import { ReactiveFormsModule } from '@angular/forms';
   styleUrl: './report-cust.component.css'
 })
 export class ReportCustComponent {
-  customers: string[] = [];  // List of customer names for the dropdown
-  selectedCustomerName: string = '';  // Bind this to the dropdown selection
-  deliveryNotes: any[] = [];  // Store delivery notes for the selected customer
+  enteredCustomerName: string = ''; // User-entered customer name
+  deliveryNotes: any[] = []; // Delivery notes fetched from the backend
 
   constructor(private reportCustService: ReportCustService) {}
 
-  ngOnInit(): void {
-    // Fetch all customers on initialization to populate the dropdown
-    this.reportCustService.getCustomers().subscribe((customerName) => {
-      this.customers = customerName;
-    });
-  }
-
-  // Method to fetch delivery notes based on selected customer name
+  // Fetch delivery notes based on the entered customer name
   fetchDeliveryNotes(): void {
-    // Ensure that the selected customer name is a string, not an object
-    if (this.selectedCustomerName) {
-      this.reportCustService.getDeliveryNotesByCustomerName(this.selectedCustomerName).subscribe(
-        (notes) => {
-          this.deliveryNotes = notes;  // Store the delivery notes
-        },
-        (error) => {
-          console.error('Error fetching delivery notes:', error);  // Handle errors
-        }
-      );
+    if (this.enteredCustomerName.trim()) {
+      this.reportCustService
+        .getDeliveryNotesByCustomerName(this.enteredCustomerName.trim())
+        .subscribe(
+          (notes) => {
+            this.deliveryNotes = notes; // Successfully fetched delivery notes
+          },
+          (error) => {
+            console.error('Error fetching delivery notes:', error);
+          }
+        );
+    } else {
+      console.error('Customer name is empty. Please enter a valid name.');
     }
   }
-  
 }

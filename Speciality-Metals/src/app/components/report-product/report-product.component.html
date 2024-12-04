@@ -1,0 +1,31 @@
+<div class="product-report-container">
+    <mat-card>
+      <h2>Search Product Delivery Notes</h2>
+      <mat-form-field appearance="outline" class="product-input">
+        <mat-label>Product Name</mat-label>
+        <input matInput [(ngModel)]="productName" placeholder="Enter product name" />
+      </mat-form-field>
+      <button mat-raised-button color="primary" (click)="fetchDeliveryNotes()">Search</button>
+    </mat-card>
+  
+    <div *ngIf="deliveryNotes.length > 0" class="delivery-notes-container">
+      <h3>Delivery Notes for {{ productName }}</h3>
+      <table mat-table [dataSource]="deliveryNotes" class="mat-elevation-z8">
+        <!-- Delivery Note Column -->
+        <ng-container matColumnDef="deliveryNote">
+          <th mat-header-cell *matHeaderCellDef>Delivery Note</th>
+          <td mat-cell *matCellDef="let note">{{ note.deliveryNote }}</td>
+        </ng-container>
+  
+        <!-- Outgoing Date Column -->
+        <ng-container matColumnDef="outgoingDate">
+          <th mat-header-cell *matHeaderCellDef>Outgoing Date</th>
+          <td mat-cell *matCellDef="let note">{{ note.outgoingDate | date: 'yyyy-MM-dd' }}</td>
+        </ng-container>
+  
+        <tr mat-header-row *matHeaderRowDef="['deliveryNote', 'outgoingDate']"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['deliveryNote', 'outgoingDate'];"></tr>
+      </table>
+    </div>
+  </div>
+  
