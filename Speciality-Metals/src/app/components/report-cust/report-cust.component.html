@@ -1,13 +1,38 @@
-<div>
-  <label for="customerSelect">Select Customer:</label>
-  <select id="customerSelect" [(ngModel)]="selectedCustomerName" (change)="fetchDeliveryNotes()">
-    <option *ngFor="let customerName of customers" [value]="customerName">{{ customerName }}</option>
-  </select>
-</div>
-
-<div *ngIf="deliveryNotes.length > 0">
-  <h3>Delivery Notes for {{ selectedCustomerName }}</h3>
-  <ul>
-    <li *ngFor="let note of deliveryNotes">{{ note.deliveryNote }}</li>
-  </ul>
-</div>
+<div class="report-cust-container">
+    <!-- Customer Name Input Form -->
+    <mat-card>
+      <h2>Search Delivery Notes</h2>
+      <mat-form-field appearance="outline" class="customer-input">
+        <mat-label>Enter Customer Name</mat-label>
+        <input matInput [(ngModel)]="enteredCustomerName" placeholder="Enter customer name" />
+      </mat-form-field>
+      <button mat-raised-button color="primary" (click)="fetchDeliveryNotes()">Search</button>
+    </mat-card>
+  
+    <!-- Displaying Delivery Notes -->
+    <div *ngIf="deliveryNotes.length > 0" class="delivery-notes-container">
+      <h3>Delivery Notes for {{ enteredCustomerName }}</h3>
+      <table mat-table [dataSource]="deliveryNotes" class="mat-elevation-z8">
+        <!-- Delivery Note Column -->
+        <ng-container matColumnDef="deliveryNote">
+          <th mat-header-cell *matHeaderCellDef> Delivery Note </th>
+          <td mat-cell *matCellDef="let note">{{ note.deliveryNote }}</td>
+        </ng-container>
+  
+        <!-- Outgoing Date Column -->
+        <ng-container matColumnDef="outgoingDate">
+          <th mat-header-cell *matHeaderCellDef> Outgoing Date </th>
+          <td mat-cell *matCellDef="let note">{{ note.outgoingDate | date: 'yyyy-MM-dd' }}</td>
+        </ng-container>
+  
+        <tr mat-header-row *matHeaderRowDef="['deliveryNote', 'outgoingDate']"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['deliveryNote', 'outgoingDate']"></tr>
+      </table>
+    </div>
+  
+    <!-- No Delivery Notes Found Message -->
+    <div *ngIf="deliveryNotes.length === 0 && enteredCustomerName">
+      <p>No delivery notes found for {{ enteredCustomerName }}.</p>
+    </div>
+  </div>
+  

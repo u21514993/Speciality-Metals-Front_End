@@ -1,0 +1,59 @@
+.product-report-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+  }
+  
+  mat-card {
+    width: 50%;
+    padding: 20px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .product-input {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  
+  .delivery-notes-container {
+    width: 80%;
+    margin-top: 20px;
+  }
+  
+  table {
+    width: 100%;
+    margin-top: 20px;
+    background-color: #fff;
+    border-collapse: collapse;
+  }
+  
+  th, td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  th {
+    background-color: #f1f1f1;
+  }
+  
+  mat-card h2 {
+    margin: 0;
+    text-align: center;
+    color: #333;
+  }
+  
+  button {
+    display: block;
+    margin: 0 auto;
+    width: 150px;
+  }
+  
+  .mat-elevation-z8 {
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+  }
+  

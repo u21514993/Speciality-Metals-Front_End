@@ -20,7 +20,9 @@ export class ReportCustService {
   
     // Fetch delivery notes based on customer name
     getDeliveryNotesByCustomerName(customerName: string): Observable<any> {
-      const url = `${this.apiUrl}/${customerName}`;  // Append the customer name to the endpoint
-      return this.http.get<any>(url);  // Make the GET request
-    }
+        const url = `${this.apiUrl}/${encodeURIComponent(customerName)}`; // Encode input for safety
+        return this.http.get<any>(url); // Fetch delivery notes
+      }
+      
+      
   }
