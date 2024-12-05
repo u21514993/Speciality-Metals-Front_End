@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 export interface ReportProduct {
     product_Name: string;
     deliveryNote: string;
-    outgoingDate: string;
+    outgoingDate?: Date;
   }
 
 @Injectable({
