@@ -9,7 +9,8 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { AuthService } from '../../../../services/auth.service';
 import { MatSnackBar, MatSnackBarAction } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';  // Correct import from Angular
-
+import { Observable } from 'rxjs';
+import { Staff } from '../../../../shared/Staff';
 @Component({
   selector: 'app-login-component',
   standalone: true,
@@ -27,39 +28,42 @@ import { Router } from '@angular/router';  // Correct import from Angular
 })
 export class LoginComponentComponent {
   loginForm: FormGroup;
-  loginError: string | null = null; // Property to hold the error message
+  loginError: string | null = null;
+  currentUser$: Observable<Staff | null>;
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router,           // Inject Angular Router
-    private snackBar: MatSnackBar     // Inject MatSnackBar
+    private router: Router,
+    private snackBar: MatSnackBar
   ) {
     this.loginForm = this.fb.group({
       employeeCode: ['', Validators.required],
     });
+    this.currentUser$ = this.authService.currentUser$;
   }
+  
 
   onSubmit() {
     if (this.loginForm.valid) {
       const employeeCode = this.loginForm.get('employeeCode')?.value;
-      this.authService.login(employeeCode).subscribe(
-        response => {
+      this.authService.login(employeeCode).subscribe({
+        next: (response) => {
           console.log('Login successful:', response);
-          this.loginError = null;  // Clear any previous errors
-          this.router.navigate(['/home']);  // Navigate to home page on successful login
+          const user = this.authService.getCurrentUser();
+          console.log('Current user:', user);  // Verify user is stored
+          this.loginError = null;
+          this.router.navigate(['/home']);
         },
-        error => {
+        error: (error) => {
           console.error('Login failed:', error);
-          this.loginError = 'FUCK OFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF';  // Set the error message to be displayed
-
-          // Optionally, display the error using MatSnackBar
-          this.snackBar.open('FUCK OFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF', 'Close', {
+          this.loginError = 'Login failed. Please try again.';
+          this.snackBar.open('Login failed', 'Close', {
             duration: 3000,
             verticalPosition: 'top',
           });
         }
-      );
+      });
     }
   }
 }

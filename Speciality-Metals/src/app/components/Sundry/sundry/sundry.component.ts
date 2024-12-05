@@ -72,7 +72,7 @@ export class SundryComponent {
     'operator'
   ];
   dataSource!: MatTableDataSource<any>; // Changed to any to accommodate mapped data
-  currentOperator: string = '';
+  currentUserEmployeeID: string = '';
   uniqueSundryNoteIds: number[] = [];
   constructor(
     private fb: FormBuilder,
@@ -80,7 +80,7 @@ export class SundryComponent {
     private authService: AuthService
   ) {
     this.initializeForm();
-    this.currentOperator = this.authService.getCurrentUser()?.employee_Name || 'Unknown';
+    this.dataSource = new MatTableDataSource<any>([]);
   }
 
   ngOnInit() {
@@ -88,6 +88,7 @@ export class SundryComponent {
     this.loadSundryNotesForDropdown();
     this.loadProducts();
     this.setupWeightCalculation();
+    this.loadSundryData(); // Add this line
   }
 
   private initializeForm() {
@@ -133,15 +134,11 @@ export class SundryComponent {
       next: (result) => {
         console.log('ForkJoin result:', result);
         
-        const uniqueNoteIds = result.sundries.length 
-          ? [...new Set(result.sundries.map((s: { sundry_Note_ID: number }) => s.sundry_Note_ID))]
-          : []; // Handle empty sundries
-  
-        this.sundryNotes = uniqueNoteIds.length 
-          ? result.sundryNotes.filter((note: { sundry_Notes_ID: number }) => uniqueNoteIds.includes(note.sundry_Notes_ID))
-          : result.sundryNotes; // If no IDs, keep all sundryNotes
-  
-        console.log('Filtered sundry notes:', this.sundryNotes);
+        // Just assign all sundry notes without filtering
+        this.sundryNotes = result.sundryNotes;
+        
+        // Log the loaded notes to verify
+        console.log('Loaded sundry notes:', this.sundryNotes);
       },
       error: (error) => console.error('ForkJoin error:', error)
     });
@@ -191,65 +188,47 @@ private _filterSundryNotes(value: string): sundry[] {
   }
 
   onAddSubmit(): void {
-    console.log('Form Value:', this.addSundryForm.value);
+    const sundryNoteId = +this.addSundryForm.get('sundry_Note_ID')?.value;
+    console.log('Form sundry_Note_ID value:', sundryNoteId);
   
-    if (this.addSundryForm.valid) {
-      const selectedProduct = this.products.find(
-        p => p.product_Code === this.addSundryForm.get('productCode')?.value
-      );
+    const selectedSundryNote = this.sundryNotes.find(
+      note => note.sundry_Notes_ID === sundryNoteId
+    );
+    console.log('Selected sundry note:', selectedSundryNote);
   
-      if (!selectedProduct) {
-        console.error('No product selected');
-        alert('Please select a product from the dropdown');
-        return;
-      }
-  
-      console.log('Sundry Notes Array:', this.sundryNotes);
-  
-      const sundryNoteId = +this.addSundryForm.get('sundry_Note_ID')?.value; // Coerce to number
-      console.log('Form Value for sundry_Note_ID:', sundryNoteId);
-  
-      const selectedSundryNote = this.sundryNotes.find(
-        note => note.sundry_Note_ID === sundryNoteId
-      );
-  
-      if (!selectedSundryNote) {
-        console.error('No sundry note selected');
-        alert('Please select a sundry note from the dropdown');
-        return;
-      }
-  
-      const sundryData: sundry = {
-        sundry_Note_ID: selectedSundryNote.sundry_Note_ID,
-        productID: selectedProduct.productID,
-        gross_Weight: this.addSundryForm.get('gross_Weight')?.value,
-        tare_Weight: this.addSundryForm.get('tare_Weight')?.value,
-        net_Weight: this.addSundryForm.get('net_Weight')?.value,
-        comments: this.addSundryForm.get('comments')?.value,
-        sundry_Date: new Date()
-      };
-  
-      console.log('Sending sundry data:', sundryData);
-  
-      this.sundryService.addSundry(sundryData).subscribe({
-        next: () => {
-          console.log('Sundry added successfully');
-          this.loadSundryNotesForDropdown();
-          this.addSundryForm.reset({
-            sundry_Note_ID: null,
-            gross_Weight: 0,
-            tare_Weight: 0,
-            net_Weight: 0
-          });
-        },
-        error: (error) => {
-          console.error('Error adding sundry note:', error);
-          alert('Failed to add sundry note. Please ensure all fields are filled correctly.');
-        }
-      });
-    } else {
-      console.error('Form is invalid. Please ensure all required fields are filled.');
+    if (!selectedSundryNote) {
+      alert('No valid sundry note selected. Please try again.');
+      return;
     }
+    const currentUser = this.authService.getCurrentUser();
+  if (!currentUser) {
+    console.error('No user is logged in!');
+    return;
+  }
+  
+    const sundryData = {
+      sundry_Note_ID: this.addSundryForm.get('sundry_Note_ID')?.value,
+      productID: this.products.find(
+        p => p.product_Code === this.addSundryForm.get('productCode')?.value
+      )?.productID,
+      gross_Weight: this.addSundryForm.get('gross_Weight')?.value,
+      tare_Weight: this.addSundryForm.get('tare_Weight')?.value,
+      net_Weight: this.addSundryForm.get('net_Weight')?.value,
+      comments: this.addSundryForm.get('comments')?.value,
+      sundry_Date: new Date(),
+      employeeID: currentUser.staffID, // Use staffID from current user
+    };
+  
+    console.log('Submitting sundry data:', sundryData);
+  
+    this.sundryService.addSundry(sundryData).subscribe({
+      next: () => {
+        console.log('Sundry added successfully.');
+        this.addSundryForm.reset();
+        this.loadSundryData();
+      },
+      error: error => console.error('Failed to add sundry:', error)
+    });
   }
   printLabel() {
     console.log('Printing label...');
@@ -260,35 +239,26 @@ private _filterSundryNotes(value: string): sundry[] {
   }
 
   exportToExcel() {
-    const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('Sundry Notes');
-
-    worksheet.columns = this.displayedColumns.map(column => ({
-      header: column,
-      key: column,
-      width: 15
-    }));
-
-    // Map the data to include product details before adding to worksheet
-    const exportData = this.sundryNotes.map(note => ({
-      sundryID: note.sundryID,
-      productCode: note.productID != null ? this.getProductCode(note.productID) : 'N/A',
-      productName: note.productID != null ? this.getProductName(note.productID) : 'N/A',
-      gross_Weight: note.gross_Weight,
-      tare_Weight: note.tare_Weight,
-      net_Weight: note.net_Weight,
-      time: note.sundry_Date ? new Date(note.sundry_Date).toLocaleTimeString() : 'N/A',
-      sundry_Date: note.sundry_Date,
-      operator: this.currentOperator
-    }));
-
-    exportData.forEach(row => {
-      worksheet.addRow(row);
-    });
-
-    workbook.xlsx.writeBuffer().then(buffer => {
-      const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      saveAs(blob, 'sundry_notes.xlsx');
-    });
+    
   }
+
+  private loadSundryData() {
+    this.sundryService.getAllSundry().subscribe({
+      next: (data) => {
+        // Map the data to include product names and codes
+        const mappedData = data.map((sundry: any) => {
+          const product = this.products.find(p => p.productID === sundry.productID);
+          return {
+            ...sundry,
+            productName: product?.product_Name || 'N/A',
+            productCode: product?.product_Code || 'N/A'
+          };
+        });
+        
+        this.dataSource = new MatTableDataSource(mappedData);
+        this.dataSource.paginator = this.paginator;
+      },
+      error: (error) => console.error('Error loading sundry data:', error)
+    });
+}
 }
