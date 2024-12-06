@@ -16,6 +16,7 @@ import { MaterialModule } from './shared/material.module';
 import { ReportingComponentComponent } from './components/reporting/reporting-component/reporting-component.component';
 import { ReportCustComponent } from './components/report-cust/report-cust.component';
 import { ReportProductComponent } from './components/report-product/report-product.component';
+import { WeightReportComponent } from './components/weight-report/weight-report.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { ReportProductComponent } from './components/report-product/report-produ
     MaterialModule,   
     ReportingComponentComponent,
     ReportProductComponent,
-    ReportCustComponent
+    ReportCustComponent,  
+    WeightReportComponent
   ],
   providers: [],
   bootstrap: [], // Or whatever your root component is

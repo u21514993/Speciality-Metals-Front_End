@@ -21,6 +21,7 @@ import { ViewIncomingsComponent } from './components/incoming/view-incomings/vie
 import { SundryComponent } from './components/Sundry/sundry/sundry.component';
 import { ReportCustComponent } from './components/report-cust/report-cust.component';
 import { ReportProductComponent } from './components/report-product/report-product.component';
+import { WeightReportComponent } from './components/weight-report/weight-report.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' }, // Default route
@@ -29,6 +30,8 @@ export const routes: Routes = [
   { path: 'home', component: HomeComponentComponent },
 
   { path: 'reportProduct', component: ReportProductComponent },
+
+  { path: 'weightReport', component: WeightReportComponent },
 
   { path: 'reportCust', component: ReportCustComponent },
 

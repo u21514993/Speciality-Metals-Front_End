@@ -1,0 +1,37 @@
+<div class="container">
+    <h1>Weight Details</h1>
+    <div class="button-group">
+      <button (click)="fetchWeightDetails('Incoming')">Show Incoming Weights</button>
+      <button (click)="fetchWeightDetails('Outgoing')">Show Outgoing Weights</button>
+    </div>
+  
+    <div *ngIf="isLoading" class="loading">
+      Loading data, please wait...
+    </div>
+  
+    <table *ngIf="!isLoading && weightDetails.length > 0" class="weight-table">
+      <thead>
+        <tr>
+          <th>Product ID</th>
+          <th>Product Name</th>
+          <th>Gross Weight</th>
+          <th>Tare Weight</th>
+          <th>Net Weight</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let detail of weightDetails">
+          <td>{{ detail.productID }}</td>
+          <td>{{ detail.productName }}</td>
+          <td>{{ detail.grossWeight || 'N/A' }}</td>
+          <td>{{ detail.tareWeight || 'N/A' }}</td>
+          <td>{{ detail.netWeight || 'N/A' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  
+    <p *ngIf="!isLoading && weightDetails.length === 0" class="no-data">
+      No data available. Please select an option to display.
+    </p>
+  </div>
+  
