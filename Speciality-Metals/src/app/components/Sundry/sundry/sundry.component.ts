@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { map } from 'rxjs/operators';
 import { Observable, forkJoin } from 'rxjs';
@@ -89,6 +89,10 @@ export class SundryComponent {
     this.loadProducts();
     this.setupWeightCalculation();
     this.loadSundryData(); // Add this line
+  }
+
+  ngAfterViewInit() {
+    this.loadSundryData();
   }
 
   private initializeForm() {
@@ -206,18 +210,20 @@ private _filterSundryNotes(value: string): sundry[] {
     return;
   }
   
-    const sundryData = {
-      sundry_Note_ID: this.addSundryForm.get('sundry_Note_ID')?.value,
-      productID: this.products.find(
-        p => p.product_Code === this.addSundryForm.get('productCode')?.value
-      )?.productID,
-      gross_Weight: this.addSundryForm.get('gross_Weight')?.value,
-      tare_Weight: this.addSundryForm.get('tare_Weight')?.value,
-      net_Weight: this.addSundryForm.get('net_Weight')?.value,
-      comments: this.addSundryForm.get('comments')?.value,
-      sundry_Date: new Date(),
-      employeeID: currentUser.staffID, // Use staffID from current user
-    };
+  const currentDate = new Date();
+  const sundryData = {
+    sundry_Note_ID: this.addSundryForm.get('sundry_Note_ID')?.value,
+    productID: this.products.find(
+      p => p.product_Code === this.addSundryForm.get('productCode')?.value
+    )?.productID,
+    gross_Weight: this.addSundryForm.get('gross_Weight')?.value,
+    tare_Weight: this.addSundryForm.get('tare_Weight')?.value,
+    net_Weight: this.addSundryForm.get('net_Weight')?.value,
+    comments: this.addSundryForm.get('comments')?.value,
+    sundry_Date: currentDate,
+    time: currentDate.toTimeString().split(' ')[0],  // This will give HH:mm:ss
+    employeeID: currentUser.staffID,
+  };
   
     console.log('Submitting sundry data:', sundryData);
   
@@ -231,34 +237,270 @@ private _filterSundryNotes(value: string): sundry[] {
     });
   }
   printLabel() {
-    console.log('Printing label...');
+    // Get the current form data
+    const formData = this.addSundryForm.value;
+    
+    // Create a new window for printing
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      alert('Please allow popups for printing');
+      return;
+    }
+
+    // Create the label HTML content
+    const labelContent = `
+      <html>
+        <head>
+          <title>Sundry Label</title>
+          <style>
+            .label-container {
+              width: 4in;
+              height: 6in;
+              padding: 0.5in;
+              border: 1px solid #000;
+              margin: 0 auto;
+            }
+            .label-item {
+              margin-bottom: 15px;
+              font-size: 14px;
+            }
+            .label-title {
+              font-weight: bold;
+              font-size: 18px;
+              text-align: center;
+              margin-bottom: 20px;
+            }
+            @media print {
+              button { 
+                display: none; 
+              }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="label-container">
+            <div class="label-title">Sundry Product Label</div>
+            <div class="label-item">Product Code: ${formData.productCode || 'N/A'}</div>
+            <div class="label-item">Product Name: ${formData.productName || 'N/A'}</div>
+            <div class="label-item">Gross Weight: ${formData.gross_Weight || 0}</div>
+            <div class="label-item">Tare Weight: ${formData.tare_Weight || 0}</div>
+            <div class="label-item">Net Weight: ${formData.net_Weight || 0}</div>
+            <div class="label-item">Date: ${new Date().toLocaleDateString()}</div>
+            <div class="label-item">Time: ${new Date().toLocaleTimeString()}</div>
+          </div>
+          <button onclick="window.print()">Print</button>
+        </body>
+      </html>`;
+
+    // Write to the new window and trigger print
+    printWindow.document.write(labelContent);
+    printWindow.document.close();
   }
+
 
   printTable() {
-    window.print();
+    // Create a new window for printing
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      alert('Please allow popups for printing');
+      return;
+    }
+
+    // Get the current data from the table
+    const data = this.dataSource.data;
+
+    // Create the HTML content
+    let printContent = `
+      <html>
+        <head>
+          <title>Sundry Records</title>
+          <style>
+            table { 
+              width: 100%; 
+              border-collapse: collapse; 
+              margin-bottom: 20px;
+            }
+            th, td { 
+              border: 1px solid #ddd; 
+              padding: 8px; 
+              text-align: left; 
+            }
+            th { 
+              background-color: #f5f5f5; 
+            }
+            h1 { 
+              text-align: center; 
+              margin-bottom: 20px;
+            }
+            @media print {
+              button { 
+                display: none; 
+              }
+            }
+          </style>
+        </head>
+        <body>
+          <h1>Sundry Records</h1>
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Product Code</th>
+                <th>Product Name</th>
+                <th>Gross Weight</th>
+                <th>Tare Weight</th>
+                <th>Net Weight</th>
+                <th>Time</th>
+                <th>Date</th>
+                <th>Operator</th>
+              </tr>
+            </thead>
+            <tbody>`;
+
+    // Add data rows
+    data.forEach(item => {
+      printContent += `
+        <tr>
+          <td>${item.sundryID || 'N/A'}</td>
+          <td>${item.productCode || 'N/A'}</td>
+          <td>${item.productName || 'N/A'}</td>
+          <td>${item.gross_Weight || 0}</td>
+          <td>${item.tare_Weight || 0}</td>
+          <td>${item.net_Weight || 0}</td>
+          <td>${item.time || 'N/A'}</td>
+          <td>${new Date(item.sundry_Date).toLocaleDateString() || 'N/A'}</td>
+          <td>${item.operator || 'N/A'}</td>
+        </tr>`;
+    });
+
+    printContent += `
+            </tbody>
+          </table>
+          <button onclick="window.print()">Print</button>
+        </body>
+      </html>`;
+
+    // Write to the new window and trigger print
+    printWindow.document.write(printContent);
+    printWindow.document.close();
   }
 
-  exportToExcel() {
-    
+
+  async exportToExcel() {
+    try {
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet('Sundry Records');
+
+      // Define columns
+      worksheet.columns = [
+        { header: 'ID', key: 'sundryID', width: 10 },
+        { header: 'Product Code', key: 'productCode', width: 15 },
+        { header: 'Product Name', key: 'productName', width: 20 },
+        { header: 'Gross Weight', key: 'gross_Weight', width: 15 },
+        { header: 'Tare Weight', key: 'tare_Weight', width: 15 },
+        { header: 'Net Weight', key: 'net_Weight', width: 15 },
+        { header: 'Time', key: 'time', width: 15 },
+        { header: 'Date', key: 'sundry_Date', width: 15 },
+        { header: 'Operator', key: 'operator', width: 20 }
+      ];
+
+      // Style the header row
+      worksheet.getRow(1).font = { bold: true };
+      worksheet.getRow(1).fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FFE0E0E0' }
+      };
+
+      // Add data rows
+      const data = this.dataSource.data;
+      data.forEach(item => {
+        worksheet.addRow({
+          sundryID: item.sundryID || 'N/A',
+          productCode: item.productCode || 'N/A',
+          productName: item.productName || 'N/A',
+          gross_Weight: item.gross_Weight || 0,
+          tare_Weight: item.tare_Weight || 0,
+          net_Weight: item.net_Weight || 0,
+          time: item.time || 'N/A',
+          sundry_Date: new Date(item.sundry_Date).toLocaleDateString() || 'N/A',
+          operator: item.operator || 'N/A'
+        });
+      });
+
+      // Auto-fit columns with type-safe implementation
+      worksheet.columns.forEach(column => {
+        if (column.key) { // Check if column.key exists
+          const columnLength = Math.max(
+            column.header?.toString().length || 10,
+            ...worksheet.getColumn(column.key as string).values
+              .filter((v): v is string | number => v !== null && v !== undefined) // Type guard
+              .map(v => v.toString().length)
+          );
+          column.width = columnLength + 2;
+        }
+      });
+
+      // Generate Excel file
+      const buffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([buffer], { 
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+      });
+      
+      // Save the file
+      const fileName = `Sundry_Records_${new Date().toISOString().split('T')[0]}.xlsx`;
+      saveAs(blob, fileName);
+
+    } catch (error) {
+      console.error('Error exporting to Excel:', error);
+      alert('Error exporting to Excel. Please try again.');
+    }
   }
 
   private loadSundryData() {
-    this.sundryService.getAllSundry().subscribe({
+    console.log('Loading sundry data...');
+    forkJoin({
+      sundries: this.sundryService.getAllSundry(),
+      products: this.sundryService.getAllProducts(),
+      staff: this.authService.getAllStaff()
+    }).subscribe({
       next: (data) => {
-        // Map the data to include product names and codes
-        const mappedData = data.map((sundry: any) => {
-          const product = this.products.find(p => p.productID === sundry.productID);
+        const mappedData = data.sundries.map((sundry: sundry) => {
+          const product = data.products.find((p: Product) => p.productID === sundry.productID);
+          const employee = data.staff.find((s: any) => s.staffID === sundry.employeeID);
+          
           return {
-            ...sundry,
+            sundryID: sundry.sundryID,
+            sundry_Date: sundry.sundry_Date,
+            time: sundry.time,
+            gross_Weight: sundry.gross_Weight,
+            tare_Weight: sundry.tare_Weight,
+            net_Weight: sundry.net_Weight,
+            employeeID: sundry.employeeID,
+            productID: sundry.productID,
+            comments: sundry.comments,
+            sundry_Note_ID: sundry.sundry_Note_ID,
             productName: product?.product_Name || 'N/A',
-            productCode: product?.product_Code || 'N/A'
+            productCode: product?.product_Code || 'N/A',
+            operator: employee?.employee_Name || 'N/A'
           };
         });
         
+        console.log('Mapped data:', mappedData);
         this.dataSource = new MatTableDataSource(mappedData);
         this.dataSource.paginator = this.paginator;
       },
-      error: (error) => console.error('Error loading sundry data:', error)
+      error: (error) => {
+        console.error('Error loading sundry data:', error);
+      },
+      complete: () => {
+        console.log('Loading completed');
+      }
     });
-}
+  }
+
+  // Optional: Add a refresh method that can be called after adding new data
+  refreshTable() {
+    this.loadSundryData();
+  }
 }

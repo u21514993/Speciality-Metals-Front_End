@@ -80,63 +80,74 @@
     <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 product-table">
       <ng-container matColumnDef="sundryID">
         <th mat-header-cell *matHeaderCellDef>ID</th>
-        <td mat-cell *matCellDef="let sundry">{{ sundry.sundryID }}</td>
+        <td mat-cell *matCellDef="let sundry">{{ sundry.sundryID || 'N/A' }}</td>
       </ng-container>
 
       <ng-container matColumnDef="productCode">
         <th mat-header-cell *matHeaderCellDef>Product Code</th>
-        <td mat-cell *matCellDef="let sundry">{{ sundry.productCode }}</td>
+        <td mat-cell *matCellDef="let sundry">{{ sundry.productCode || 'N/A' }}</td>
       </ng-container>
 
       <ng-container matColumnDef="productName">
         <th mat-header-cell *matHeaderCellDef>Product Name</th>
-        <td mat-cell *matCellDef="let sundry">{{ sundry.productName }}</td>
+        <td mat-cell *matCellDef="let sundry">{{ sundry.productName || 'N/A' }}</td>
       </ng-container>
 
       <ng-container matColumnDef="gross_Weight">
         <th mat-header-cell *matHeaderCellDef>Gross Weight</th>
-        <td mat-cell *matCellDef="let sundry">{{ sundry.gross_Weight }}</td>
+        <td mat-cell *matCellDef="let sundry">{{ sundry.gross_Weight || 0 }}</td>
       </ng-container>
 
       <ng-container matColumnDef="tare_Weight">
         <th mat-header-cell *matHeaderCellDef>Tare Weight</th>
-        <td mat-cell *matCellDef="let sundry">{{ sundry.tare_Weight }}</td>
+        <td mat-cell *matCellDef="let sundry">{{ sundry.tare_Weight || 0 }}</td>
       </ng-container>
 
       <ng-container matColumnDef="net_Weight">
         <th mat-header-cell *matHeaderCellDef>Net Weight</th>
-        <td mat-cell *matCellDef="let sundry">{{ sundry.net_Weight }}</td>
+        <td mat-cell *matCellDef="let sundry">{{ sundry.net_Weight || 0 }}</td>
       </ng-container>
 
       <ng-container matColumnDef="time">
         <th mat-header-cell *matHeaderCellDef>Time</th>
-        <td mat-cell *matCellDef="let sundry">{{ sundry.time }}</td>
+        <td mat-cell *matCellDef="let sundry">
+          {{ sundry.time || 'N/A' }}
+        </td>
       </ng-container>
 
       <ng-container matColumnDef="sundry_Date">
         <th mat-header-cell *matHeaderCellDef>Date</th>
-        <td mat-cell *matCellDef="let sundry">{{ sundry.sundry_Date | date: 'shortDate' }}</td>
+        <td mat-cell *matCellDef="let sundry">
+          {{ (sundry.sundry_Date | date:'shortDate') || 'N/A' }}
+        </td>
       </ng-container>
 
       <ng-container matColumnDef="operator">
         <th mat-header-cell *matHeaderCellDef>Operator</th>
-        <td mat-cell *matCellDef="let sundry">{{ sundry.operator }}</td>
+        <td mat-cell *matCellDef="let sundry">{{ sundry.operator || 'N/A' }}</td>
       </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+      <!-- No data message -->
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="9">No data available</td>
+      </tr>
     </table>
 
-    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+    <mat-paginator 
+      [pageSizeOptions]="[5, 10, 20]" 
+      showFirstLastButtons 
+      aria-label="Select page of sundry records">
+    </mat-paginator>
     
-    <div class="input-row">
+    <div class="button-row">
       <button mat-raised-button class="print" (click)="printTable()">
         <mat-icon>print</mat-icon>
         Print
       </button>
-    </div>
-    
-    <div class="input-row">
+      
       <button mat-raised-button class="export-excel" (click)="exportToExcel()">
         <mat-icon>table_view</mat-icon>
         Excel
