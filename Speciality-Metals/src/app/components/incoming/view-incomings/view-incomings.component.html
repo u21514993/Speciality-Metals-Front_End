@@ -1,122 +1,187 @@
 <div class="incoming-container">
   <div class="page-header">
     <h1>Incoming Products</h1>
-    <p class="page-description">
+    <p class="page-description" id="desc">
       This page lists all the incoming products. You can add, update, or delete incoming records.
     </p>
   </div>
 
-  <!-- Add Incoming Form -->
   <form [formGroup]="addIncomingForm" (ngSubmit)="onAddSubmit()" class="incoming-form">
-    <!-- First row of inputs -->
     <div class="input-row">
-      <div class="form-group">
-        <label for="gross_Weight">Gross Weight</label>
-        <input id="gross_Weight" formControlName="gross_Weight" type="number" />
-      </div>
-      <div class="form-group">
-        <label for="tare_Weight">Tare Weight</label>
-        <input id="tare_Weight" formControlName="tare_Weight" type="number" />
-      </div>
-      <div class="form-group">
-        <label for="net_Weight">Net Weight</label>
-        <input id="net_Weight" formControlName="net_Weight" type="number" />
-      </div>
+      <mat-form-field class="form-group">
+        <mat-label>GRV ID</mat-label>
+        <input matInput formControlName="gRV_ID" type="number" />
+      </mat-form-field>
+
+      <mat-form-field class="form-group">
+        <mat-label>Delivery Note</mat-label>
+        <input matInput formControlName="sundry_Note_ID" type="number" />
+      </mat-form-field>
+    </div>
+    
+    <div class="input-row">
+      <mat-form-field class="form-group">
+        <mat-label>Supplier Name</mat-label>
+        <input matInput 
+               formControlName="supplierName" 
+               type="text" 
+               [matAutocomplete]="supplierAutoName" />
+        <mat-autocomplete #supplierAutoName="matAutocomplete">
+          <mat-option *ngFor="let supplier of suppliers" [value]="supplier.supplier_Name">
+            {{supplier.supplier_Name}}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+
+      <mat-form-field class="form-group">
+        <mat-label>Supplier Code</mat-label>
+        <input matInput 
+               formControlName="supplierCode" 
+               type="text" 
+               [matAutocomplete]="supplierAutoCode" />
+        <mat-autocomplete #supplierAutoCode="matAutocomplete">
+          <mat-option *ngFor="let supplier of filteredSupplierCodes | async" [value]="supplier.supplier_Code">
+            {{supplier.supplier_Code}}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+      
+      <mat-form-field class="form-group">
+        <mat-label>Product Name</mat-label>
+        <input matInput 
+               formControlName="productName" 
+               type="text" 
+               [matAutocomplete]="productAutoName" />
+        <mat-autocomplete #productAutoName="matAutocomplete">
+          <mat-option *ngFor="let product of products" [value]="product.product_Name">
+            {{product.product_Name}}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+      <mat-form-field class="form-group">
+        <mat-label>Product Code</mat-label>
+        <input matInput 
+               formControlName="productCode" 
+               type="text" 
+               [matAutocomplete]="productAutoCode" />
+        <mat-autocomplete #productAutoCode="matAutocomplete">
+          <mat-option *ngFor="let product of filteredProductCodes | async" [value]="product.product_Code">
+            {{product.product_Code}}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
     </div>
 
-    <!-- Second row of inputs -->
     <div class="input-row">
-      <div class="form-group">
-        <label for="grV_Number">GRV Number</label>
-        <input id="grV_Number" formControlName="grV_Number" type="text" />
-      </div>
-      <div class="form-group">
-        <label for="supplierID">Supplier ID</label>
-        <input id="supplierID" formControlName="supplierID" type="number" />
-      </div>
-      <div class="form-group">
-        <label for="productID">Product ID</label>
-        <input id="productID" formControlName="productID" type="number" />
-      </div>
+      <mat-form-field class="form-group">
+        <mat-label>Comments</mat-label>
+        <textarea matInput formControlName="comments"></textarea>
+      </mat-form-field>
     </div>
-
-    <!-- Submit Button -->
+    
     <div class="input-row">
-      <div class="form-group">
-        <button class="btn-primary" type="submit">Add</button>
-      </div>
+      <mat-form-field class="form-group">
+        <mat-label>Gross Weight</mat-label>
+        <input matInput formControlName="gross_Weight" type="number" min="0" />
+      </mat-form-field>
+      
+      <mat-form-field class="form-group">
+        <mat-label>Tare Weight</mat-label>
+        <input matInput formControlName="tare_Weight" type="number" min="0" />
+      </mat-form-field>
+      
+      <mat-form-field class="form-group">
+        <mat-label>Net Weight</mat-label>
+        <input matInput formControlName="net_Weight" type="number" readonly />
+      </mat-form-field>
+    </div>
+    
+    <div class="button-row">
+      <button mat-raised-button color="primary" type="submit" [disabled]="!addIncomingForm.valid">Add</button>
+      <button mat-raised-button type="button" (click)="printLabel()">
+        <mat-icon>print</mat-icon>
+        Label
+      </button>
     </div>
   </form>
 
-  <!-- Incoming Products Table -->
-  <h2 class="mat-title">Incoming Records</h2>
-  <table mat-table [dataSource]="incomings" class="mat-elevation-z8 product-table">
-    <!-- ID Column -->
-    <ng-container matColumnDef="incomingID">
-      <th mat-header-cell *matHeaderCellDef>ID</th>
-      <td mat-cell *matCellDef="let incoming">{{ incoming.incomingID }}</td>
-    </ng-container>
+  <div class="table-container">
+    <h2 class="mat-title">Incoming Records</h2>
+    <table mat-table [dataSource]="incomings" class="mat-elevation-z8">
+      <ng-container matColumnDef="incomingID">
+        <th mat-header-cell *matHeaderCellDef>ID</th>
+        <td mat-cell *matCellDef="let incoming">{{ incoming.incomingID }}</td>
+      </ng-container>
 
-    <!-- Date Column -->
-    <ng-container matColumnDef="incoming_Date">
-      <th mat-header-cell *matHeaderCellDef>Date</th>
-      <td mat-cell *matCellDef="let incoming">{{ incoming.incoming_Date | date: 'shortDate' }}</td>
-    </ng-container>
+      <ng-container matColumnDef="incoming_Date">
+        <th mat-header-cell *matHeaderCellDef>Date</th>
+        <td mat-cell *matCellDef="let incoming">{{ incoming.incoming_Date | date: 'shortDate' }}</td>
+      </ng-container>
 
-    <!-- Gross Weight Column -->
-    <ng-container matColumnDef="gross_Weight">
-      <th mat-header-cell *matHeaderCellDef>Gross Weight</th>
-      <td mat-cell *matCellDef="let incoming">{{ incoming.gross_Weight }}</td>
-    </ng-container>
+      <ng-container matColumnDef="gross_Weight">
+        <th mat-header-cell *matHeaderCellDef>Gross Weight</th>
+        <td mat-cell *matCellDef="let incoming">{{ incoming.gross_Weight }}</td>
+      </ng-container>
 
-    <!-- Tare Weight Column -->
-    <ng-container matColumnDef="tare_Weight">
-      <th mat-header-cell *matHeaderCellDef>Tare Weight</th>
-      <td mat-cell *matCellDef="let incoming">{{ incoming.tare_Weight }}</td>
-    </ng-container>
+      <ng-container matColumnDef="tare_Weight">
+        <th mat-header-cell *matHeaderCellDef>Tare Weight</th>
+        <td mat-cell *matCellDef="let incoming">{{ incoming.tare_Weight }}</td>
+      </ng-container>
 
-    <!-- Net Weight Column -->
-    <ng-container matColumnDef="net_Weight">
-      <th mat-header-cell *matHeaderCellDef>Net Weight</th>
-      <td mat-cell *matCellDef="let incoming">{{ incoming.net_Weight }}</td>
-    </ng-container>
+      <ng-container matColumnDef="net_Weight">
+        <th mat-header-cell *matHeaderCellDef>Net Weight</th>
+        <td mat-cell *matCellDef="let incoming">{{ incoming.net_Weight }}</td>
+      </ng-container>
 
-    <!-- GRV Number Column -->
-    <ng-container matColumnDef="grV_Number">
-      <th mat-header-cell *matHeaderCellDef>GRV Number</th>
-      <td mat-cell *matCellDef="let incoming">{{ incoming.grV_Number }}</td>
-    </ng-container>
+      <ng-container matColumnDef="gRV_ID">
+        <th mat-header-cell *matHeaderCellDef>GRV ID</th>
+        <td mat-cell *matCellDef="let incoming">{{ incoming.gRV_ID }}</td>
+      </ng-container>
 
-    <!-- Supplier ID Column -->
-    <ng-container matColumnDef="supplierID">
-      <th mat-header-cell *matHeaderCellDef>Supplier ID</th>
-      <td mat-cell *matCellDef="let incoming">{{ incoming.supplierID }}</td>
-    </ng-container>
+      <ng-container matColumnDef="supplierName">
+        <th mat-header-cell *matHeaderCellDef>Supplier</th>
+        <td mat-cell *matCellDef="let incoming">{{ incoming.supplierName }}</td>
+      </ng-container>
 
-    <!-- Product ID Column -->
-    <ng-container matColumnDef="productID">
-      <th mat-header-cell *matHeaderCellDef>Product ID</th>
-      <td mat-cell *matCellDef="let incoming">{{ incoming.productID }}</td>
-    </ng-container>
+      <ng-container matColumnDef="productName">
+        <th mat-header-cell *matHeaderCellDef>Product</th>
+        <td mat-cell *matCellDef="let incoming">{{ incoming.productName }}</td>
+      </ng-container>
 
-    <!-- Edit and Delete Buttons -->
-    <ng-container matColumnDef="actions">
-      <th mat-header-cell *matHeaderCellDef>Actions</th>
-      <td mat-cell *matCellDef="let incoming">
-        <button mat-icon-button color="primary">
-          <mat-icon>edit</mat-icon>
-        </button>
-        <button mat-icon-button color="warn" (click)="deleteIncoming(incoming.incomingID)">
-          <mat-icon>delete</mat-icon>
-        </button>
-      </td>
-    </ng-container>
+      <ng-container matColumnDef="comments">
+        <th mat-header-cell *matHeaderCellDef>Comments</th>
+        <td mat-cell *matCellDef="let incoming">{{ incoming.comments }}</td>
+      </ng-container>
 
-    <!-- Header and Row -->
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-  </table>
+      <ng-container matColumnDef="sundry_Note_ID">
+        <th mat-header-cell *matHeaderCellDef>Sundry Note ID</th>
+        <td mat-cell *matCellDef="let incoming">{{ incoming.sundry_Note_ID }}</td>
+      </ng-container>
 
-  <!-- Paginator -->
-  <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <td mat-cell *matCellDef="let incoming">
+          <button mat-icon-button color="warn" (click)="deleteIncoming(incoming.incomingID)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+
+    <div class="button-row">
+      <button mat-raised-button (click)="printTable()">
+        <mat-icon>print</mat-icon>
+        Print
+      </button>
+      <button mat-raised-button (click)="exportToExcel()">
+        <mat-icon>table_view</mat-icon>
+        Excel
+      </button>
+    </div>
+  </div>
 </div>
