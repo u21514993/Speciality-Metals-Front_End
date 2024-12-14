@@ -4,7 +4,10 @@ export interface incoming {
   gross_Weight?: number;
   tare_Weight?: number;
   net_Weight?: number;
-  grV_Number?: string;
   supplierID?: number;
   productID?: number;
+  employeeID?: number;
+  gRV_ID?: number;
+  comments?: string;
+  sundry_Note_ID: number;
 }
