@@ -9,13 +9,29 @@
   <form [formGroup]="addIncomingForm" (ngSubmit)="onAddSubmit()" class="incoming-form">
     <div class="input-row">
       <mat-form-field class="form-group">
-        <mat-label>GRV ID</mat-label>
-        <input matInput formControlName="gRV_ID" type="number" />
+        <mat-label>GRV</mat-label>
+        <input matInput 
+               formControlName="gRV_ID" 
+               [matAutocomplete]="grvAuto"
+               placeholder="Select GRV">
+        <mat-autocomplete #grvAuto="matAutocomplete">
+          <mat-option *ngFor="let grv of grvList" [value]="grv.gRV">
+            {{grv.gRV}}
+          </mat-option>
+        </mat-autocomplete>
       </mat-form-field>
 
       <mat-form-field class="form-group">
         <mat-label>Delivery Note</mat-label>
-        <input matInput formControlName="sundry_Note_ID" type="number" />
+        <input matInput
+               formControlName="sundry_Note_ID"
+               type="text"
+               [matAutocomplete]="sundryAuto" />
+        <mat-autocomplete #sundryAuto="matAutocomplete">
+          <mat-option *ngFor="let note of filteredSundryNotes | async" [value]="note.sundry_Note_ID">
+            {{note.sundry_Note}}
+          </mat-option>
+        </mat-autocomplete>
       </mat-form-field>
     </div>
     
@@ -71,7 +87,7 @@
         </mat-autocomplete>
       </mat-form-field>
     </div>
-
+    
     <div class="input-row">
       <mat-form-field class="form-group">
         <mat-label>Comments</mat-label>
@@ -103,8 +119,9 @@
         Label
       </button>
     </div>
+    
+  
   </form>
-
   <div class="table-container">
     <h2 class="mat-title">Incoming Records</h2>
     <table mat-table [dataSource]="incomings" class="mat-elevation-z8">

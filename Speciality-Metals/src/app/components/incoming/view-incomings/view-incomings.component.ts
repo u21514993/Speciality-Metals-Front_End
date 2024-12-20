@@ -20,6 +20,10 @@ import { Supplier } from '../../../shared/supplier';
 import { Product } from '../../../shared/Product';
 import { ProductService } from '../../../services/product.service';
 import { SupplierService } from '../../../services/supplier.service';
+import { sundryservice } from '../../../services/sundry.service';
+import { GRV } from '../../../shared/grv';
+import { grvservice } from '../../../services/grv.service';
+import { Sundry_Note } from '../../../shared/sundry_note';
 
 import {
   ReactiveFormsModule,
@@ -52,10 +56,17 @@ import {
     IncomingService,
     SupplierService,
     ProductService,
-    HttpClient
+    HttpClient,
+    sundryservice,
+    grvservice
   ],
 })
 export class ViewIncomingsComponent implements OnInit {
+  
+  filteredGRVs!: Observable<GRV[]>;
+  filteredSundryNotes!: Observable<any[]>;
+  grvList: GRV[] = []; // This should be populated with your GRV data
+  sundryNotesList: any[] = [];
   protected readonly Array = Array;
   addIncomingForm!: FormGroup;
   incomings = new MatTableDataSource<incoming>([]);
@@ -77,29 +88,34 @@ export class ViewIncomingsComponent implements OnInit {
   filteredSupplierCodes!: Observable<Supplier[]>;
   filteredProductCodes!: Observable<Product[]>;
   
+  
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   constructor(
     private incomingService: IncomingService,
     private fb: FormBuilder,
     private supplierService: SupplierService,
-    private productService: ProductService
+    private productService: ProductService,
+    private grvService: grvservice,
+    private sundryService: sundryservice,
+    
   ) {}
 
   ngOnInit(): void {
     this.initializeForm();
     this.loadAllData();
     this.setupFormListeners();
-    this.setupFilteredObservables();
   }
 
   ngAfterViewInit() {
     this.incomings.paginator = this.paginator;
   }
 
+  
+
   private initializeForm(): void {
     this.addIncomingForm = this.fb.group({
-      gRV_ID: ['', Validators.required],
+      gRV_ID: [''],
       supplierName: ['', Validators.required],
       supplierCode: ['', Validators.required],
       productName: ['', Validators.required],
@@ -111,8 +127,40 @@ export class ViewIncomingsComponent implements OnInit {
       sundry_Note_ID: [0, Validators.required]
     });
   }
+  private loadAllData(): void {
+    forkJoin({
+      suppliers: this.supplierService.getAllSuppliers(),
+      products: this.productService.getAllProducts(),
+      sundryNotes: this.sundryService.getSundryNotes(),
+      grvs: this.grvService.getAllGRV()
+    }).subscribe({
+      next: ({ suppliers, products, sundryNotes, grvs }) => {
+        console.log('Raw GRV data:', grvs);
+        this.suppliers = suppliers;
+        this.products = products;
+        this.sundryNotesList = sundryNotes;
+        this.grvList = grvs;
+        this.loadIncomings();
+      },
+      error: (error) => console.error('Error loading data:', error)
+    });
+  }
+
   private setupFilteredObservables(): void {
-    // Setup supplier code filtering
+
+    // Sundry Notes filtering
+    this.filteredSundryNotes = this.addIncomingForm.get('sundry_Note_ID')!.valueChanges.pipe(
+      startWith(''),
+      map(value => {
+        const filterValue = value?.toString().toLowerCase() || '';
+        return this.sundryNotesList.filter(note => 
+          note.sundry_Note!.toLowerCase().includes(filterValue) ||
+          note.sundry_Note_ID!.toString().includes(filterValue)
+        );
+      })
+    );
+
+    // Existing supplier and product filtering...
     this.filteredSupplierCodes = this.addIncomingForm.get('supplierCode')!.valueChanges.pipe(
       startWith(''),
       map(value => {
@@ -123,7 +171,6 @@ export class ViewIncomingsComponent implements OnInit {
       })
     );
 
-    // Setup product code filtering
     this.filteredProductCodes = this.addIncomingForm.get('productCode')!.valueChanges.pipe(
       startWith(''),
       map(value => {
@@ -135,19 +182,6 @@ export class ViewIncomingsComponent implements OnInit {
     );
   }
 
-  private loadAllData(): void {
-    forkJoin({
-      suppliers: this.supplierService.getAllSuppliers(),
-      products: this.productService.getAllProducts(),
-    }).subscribe({
-      next: ({ suppliers, products }) => {
-        this.suppliers = suppliers;
-        this.products = products;
-        this.loadIncomings();
-      },
-      error: (error) => console.error('Error loading data:', error)
-    });
-  }
   private setupFormListeners(): void {
     // Supplier name change listener
     this.addIncomingForm.get('supplierName')?.valueChanges.subscribe(value => {
@@ -237,7 +271,7 @@ export class ViewIncomingsComponent implements OnInit {
       const formValue = this.addIncomingForm.getRawValue();
       const supplier = this.suppliers.find(s => s.supplier_Name === formValue.supplierName);
       const product = this.products.find(p => p.product_Name === formValue.productName);
-      
+
       const newIncoming: incoming = {
         incoming_Date: new Date(),
         gRV_ID: formValue.gRV_ID,
@@ -248,7 +282,7 @@ export class ViewIncomingsComponent implements OnInit {
         net_Weight: formValue.net_Weight,
         comments: formValue.comments,
         sundry_Note_ID: formValue.sundry_Note_ID,
-        employeeID: 1 // This should be set based on logged-in user
+        employeeID: 1
       };
 
       this.incomingService.addIncoming(newIncoming).subscribe({
@@ -260,6 +294,13 @@ export class ViewIncomingsComponent implements OnInit {
       });
     }
   }
+
+  // Update the HTML template to use proper display values
+  displayGRV(grvId: number): string {
+    const grv = this.grvList.find(g => g.gRV_ID === grvId);
+    return grv ? grv.gRV : '';
+  }
+
 
 
   deleteIncoming(incomingID: number): void {
