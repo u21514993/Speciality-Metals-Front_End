@@ -14,9 +14,9 @@
                formControlName="gRV_ID" 
                [matAutocomplete]="grvAuto"
                placeholder="Select GRV">
-        <mat-autocomplete #grvAuto="matAutocomplete">
-          <mat-option *ngFor="let grv of grvList" [value]="grv.gRV">
-            {{grv.gRV}}
+        <mat-autocomplete #grvAuto="matAutocomplete" [displayWith]="displayGRV.bind(this)">
+          <mat-option *ngFor="let grv of grvList" [value]="grv">
+            {{grv.grv}}
           </mat-option>
         </mat-autocomplete>
       </mat-form-field>

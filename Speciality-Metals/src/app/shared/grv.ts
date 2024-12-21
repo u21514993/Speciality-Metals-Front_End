@@ -1,4 +1,4 @@
 export interface GRV{
-    gRV_ID: number;
-    gRV: string; 
+    grV_ID?: number;
+    grv?: string; 
 }
