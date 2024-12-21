@@ -105,6 +105,8 @@ export class ViewIncomingsComponent implements OnInit {
     this.initializeForm();
     this.loadAllData();
     this.setupFormListeners();
+    this.setupFilteredObservables(); // Make sure this exists
+    this.setupGRVFilter(); // Add this line
   }
 
   ngAfterViewInit() {
@@ -136,14 +138,34 @@ export class ViewIncomingsComponent implements OnInit {
     }).subscribe({
       next: ({ suppliers, products, sundryNotes, grvs }) => {
         console.log('Raw GRV data:', grvs);
-        this.suppliers = suppliers;
-        this.products = products;
-        this.sundryNotesList = sundryNotes;
-        this.grvList = grvs;
+        this.suppliers = suppliers || [];
+        this.products = products || [];
+        this.sundryNotesList = sundryNotes || [];
+        this.grvList = grvs || [];
         this.loadIncomings();
       },
       error: (error) => console.error('Error loading data:', error)
     });
+  }
+
+  private setupGRVFilter(): void {
+    this.filteredGRVs = this.addIncomingForm.get('gRV_ID')!.valueChanges.pipe(
+      startWith(''),
+      map(value => {
+        if (!this.grvList) return [];
+        
+        const filterValue = (value || '').toString().toLowerCase();
+        return this.grvList.filter(grv => {
+          if (!grv) return false;
+          return grv.grv?.toString().toLowerCase().includes(filterValue) || 
+                 grv.grV_ID?.toString().includes(filterValue);
+        });
+      })
+    );
+  }
+
+  displayGRV(grv: any): string {
+    return grv ? grv.grv : '';
   }
 
   private setupFilteredObservables(): void {
@@ -295,11 +317,6 @@ export class ViewIncomingsComponent implements OnInit {
     }
   }
 
-  // Update the HTML template to use proper display values
-  displayGRV(grvId: number): string {
-    const grv = this.grvList.find(g => g.gRV_ID === grvId);
-    return grv ? grv.gRV : '';
-  }
 
 
 
