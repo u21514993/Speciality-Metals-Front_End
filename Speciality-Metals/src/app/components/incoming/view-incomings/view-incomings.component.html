@@ -25,10 +25,10 @@
         <mat-label>Delivery Note</mat-label>
         <input matInput
                formControlName="sundry_Note_ID"
-               type="text"
-               [matAutocomplete]="sundryAuto" />
-        <mat-autocomplete #sundryAuto="matAutocomplete">
-          <mat-option *ngFor="let note of filteredSundryNotes | async" [value]="note.sundry_Note_ID">
+               [matAutocomplete]="sundryAuto"
+               placeholder="Please select a delivery note" />
+        <mat-autocomplete #sundryAuto="matAutocomplete" [displayWith]="displaySundryNote">
+          <mat-option *ngFor="let note of filteredSundryNotes | async" [value]="note">
             {{note.sundry_Note}}
           </mat-option>
         </mat-autocomplete>

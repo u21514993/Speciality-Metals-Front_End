@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { tap, catchError, throwError, forkJoin } from 'rxjs';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
@@ -126,7 +126,7 @@ export class ViewIncomingsComponent implements OnInit {
       tare_Weight: [0, [Validators.required, Validators.min(0)]],
       net_Weight: [{ value: 0, disabled: true }],
       comments: [''],
-      sundry_Note_ID: [0, Validators.required]
+      sundry_Note_ID: ['', Validators.required] // Changed to empty string initial value
     });
   }
   private loadAllData(): void {
@@ -137,12 +137,13 @@ export class ViewIncomingsComponent implements OnInit {
       grvs: this.grvService.getAllGRV()
     }).subscribe({
       next: ({ suppliers, products, sundryNotes, grvs }) => {
-        console.log('Raw GRV data:', grvs);
         this.suppliers = suppliers || [];
         this.products = products || [];
         this.sundryNotesList = sundryNotes || [];
         this.grvList = grvs || [];
         this.loadIncomings();
+        this.filteredSundryNotes = of(this.sundryNotesList);
+        console.log('Loaded sundry notes:', this.sundryNotesList);
       },
       error: (error) => console.error('Error loading data:', error)
     });
@@ -167,18 +168,18 @@ export class ViewIncomingsComponent implements OnInit {
   displayGRV(grv: any): string {
     return grv ? grv.grv : '';
   }
-
   private setupFilteredObservables(): void {
 
-    // Sundry Notes filtering
     this.filteredSundryNotes = this.addIncomingForm.get('sundry_Note_ID')!.valueChanges.pipe(
       startWith(''),
       map(value => {
-        const filterValue = value?.toString().toLowerCase() || '';
-        return this.sundryNotesList.filter(note => 
-          note.sundry_Note!.toLowerCase().includes(filterValue) ||
-          note.sundry_Note_ID!.toString().includes(filterValue)
-        );
+        // If no value, return all sundry notes
+        if (!value) {
+          return this.sundryNotesList;
+        }
+        // If there is a value, filter the notes
+        const searchTerm = typeof value === 'string' ? value : value?.sundry_Note || '';
+        return this.filterSundryNotes(searchTerm);
       })
     );
 
@@ -204,6 +205,18 @@ export class ViewIncomingsComponent implements OnInit {
     );
   }
 
+  private filterSundryNotes(value: string): Sundry_Note[] {
+    const filterValue = value.toLowerCase();
+    return this.sundryNotesList.filter(note => {
+      const sundryNoteStr = note.sundry_Note?.toLowerCase() || '';
+      const sundryNoteIdStr = note.sundry_Note_ID?.toString().toLowerCase() || '';
+      return sundryNoteStr.includes(filterValue) || sundryNoteIdStr.includes(filterValue);
+    });
+  }
+  displaySundryNote(note: Sundry_Note | null): string {
+    if (!note) return '';
+    return typeof note === 'string' ? note : note.sundry_Note || note.sundry_Note_ID?.toString() || '';
+  }
   private setupFormListeners(): void {
     // Supplier name change listener
     this.addIncomingForm.get('supplierName')?.valueChanges.subscribe(value => {
@@ -293,6 +306,11 @@ export class ViewIncomingsComponent implements OnInit {
       const formValue = this.addIncomingForm.getRawValue();
       const supplier = this.suppliers.find(s => s.supplier_Name === formValue.supplierName);
       const product = this.products.find(p => p.product_Name === formValue.productName);
+      
+      // Handle sundry note ID properly
+      const sundryNoteId = typeof formValue.sundry_Note_ID === 'object' 
+        ? formValue.sundry_Note_ID.sundry_Note_ID 
+        : formValue.sundry_Note_ID;
 
       const newIncoming: incoming = {
         incoming_Date: new Date(),
@@ -303,7 +321,7 @@ export class ViewIncomingsComponent implements OnInit {
         tare_Weight: formValue.tare_Weight,
         net_Weight: formValue.net_Weight,
         comments: formValue.comments,
-        sundry_Note_ID: formValue.sundry_Note_ID,
+        sundry_Note_ID: sundryNoteId,
         employeeID: 1
       };
 
@@ -316,9 +334,6 @@ export class ViewIncomingsComponent implements OnInit {
       });
     }
   }
-
-
-
 
   deleteIncoming(incomingID: number): void {
     if (confirm('Are you sure you want to delete this incoming product?')) {
