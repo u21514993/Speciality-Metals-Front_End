@@ -24,7 +24,7 @@ import { sundryservice } from '../../../services/sundry.service';
 import { GRV } from '../../../shared/grv';
 import { grvservice } from '../../../services/grv.service';
 import { Sundry_Note } from '../../../shared/sundry_note';
-
+import { AuthService } from '../../../services/auth.service';
 import {
   ReactiveFormsModule,
   FormGroup,
@@ -58,7 +58,8 @@ import {
     ProductService,
     HttpClient,
     sundryservice,
-    grvservice
+    grvservice,
+    AuthService
   ],
 })
 export class ViewIncomingsComponent implements OnInit {
@@ -98,7 +99,7 @@ export class ViewIncomingsComponent implements OnInit {
     private productService: ProductService,
     private grvService: grvservice,
     private sundryService: sundryservice,
-    
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -126,7 +127,7 @@ export class ViewIncomingsComponent implements OnInit {
       tare_Weight: [0, [Validators.required, Validators.min(0)]],
       net_Weight: [{ value: 0, disabled: true }],
       comments: [''],
-      sundry_Note_ID: ['', Validators.required] // Changed to empty string initial value
+      sundry_Note_ID: [null, Validators.required] // Changed to null initial value
     });
   }
   private loadAllData(): void {
@@ -169,20 +170,27 @@ export class ViewIncomingsComponent implements OnInit {
     return grv ? grv.grv : '';
   }
   private setupFilteredObservables(): void {
-
     this.filteredSundryNotes = this.addIncomingForm.get('sundry_Note_ID')!.valueChanges.pipe(
       startWith(''),
       map(value => {
-        // If no value, return all sundry notes
-        if (!value) {
-          return this.sundryNotesList;
+        if (typeof value === 'string') {
+          return this.filterSundryNotes(value);
+        } else if (value && value.sundry_Note_ID) {
+          return [value];
+        } else {
+          return this.sundryNotesList; // Default list if no input
         }
-        // If there is a value, filter the notes
-        const searchTerm = typeof value === 'string' ? value : value?.sundry_Note || '';
-        return this.filterSundryNotes(searchTerm);
       })
     );
-
+  
+    // Update the form control when a sundry note is selected
+    this.addIncomingForm.get('sundry_Note_ID')?.valueChanges.subscribe(selectedNote => {
+      if (selectedNote && typeof selectedNote === 'object') {
+        this.addIncomingForm.patchValue({
+          sundry_Note_ID: selectedNote // Set the entire object
+        }, { emitEvent: false });
+      }
+    });
     // Existing supplier and product filtering...
     this.filteredSupplierCodes = this.addIncomingForm.get('supplierCode')!.valueChanges.pipe(
       startWith(''),
@@ -213,12 +221,24 @@ export class ViewIncomingsComponent implements OnInit {
       return sundryNoteStr.includes(filterValue) || sundryNoteIdStr.includes(filterValue);
     });
   }
-  displaySundryNote(note: Sundry_Note | null): string {
+  displaySundryNote(note: any): string {
     if (!note) return '';
-    return typeof note === 'string' ? note : note.sundry_Note || note.sundry_Note_ID?.toString() || '';
+    return note.sundry_Note || ''; // Ensure this returns the correct display value
   }
   private setupFormListeners(): void {
-    // Supplier name change listener
+    this.addIncomingForm.get('sundry_Note_ID')?.valueChanges.subscribe(selectedNote => {
+      console.log('Sundry Note Changed:', selectedNote);
+      if (selectedNote && typeof selectedNote === 'object') {
+        // Store the entire object to preserve the ID
+        this.addIncomingForm.patchValue({
+          sundry_Note_ID: selectedNote
+        }, { emitEvent: false });
+      }
+    });
+  
+  
+
+    // Supplier code change listener
     this.addIncomingForm.get('supplierName')?.valueChanges.subscribe(value => {
       if (value) {
         const supplier = this.suppliers.find(s => s.supplier_Name === value);
@@ -229,7 +249,7 @@ export class ViewIncomingsComponent implements OnInit {
         }
       }
     });
-
+  
     // Supplier code change listener
     this.addIncomingForm.get('supplierCode')?.valueChanges.subscribe(value => {
       if (value) {
@@ -288,10 +308,17 @@ export class ViewIncomingsComponent implements OnInit {
         const mappedData = data.map(incoming => {
           const supplier = this.suppliers.find(s => s.supplierID === incoming.supplierID);
           const product = this.products.find(p => p.productID === incoming.productID);
+          const grv = this.grvList.find(g => g.grV_ID?.toString() === incoming.grV_ID?.toString());
+          const sundryNote = this.sundryNotesList.find(
+            note => note.sundry_Notes_ID?.toString() === incoming.sundry_Note_ID?.toString()
+          );
+          
           return {
             ...incoming,
             supplierName: supplier?.supplier_Name || 'Unknown',
-            productName: product?.product_Name || 'Unknown'
+            productName: product?.product_Name || 'Unknown',
+            grvNumber: grv?.grv || 'Unknown',
+            sundryNoteNumber: sundryNote?.sundry_Note || 'Unknown'
           };
         });
         this.incomings.data = mappedData;
@@ -304,37 +331,88 @@ export class ViewIncomingsComponent implements OnInit {
   onAddSubmit(): void {
     if (this.addIncomingForm.valid) {
       const formValue = this.addIncomingForm.getRawValue();
+      console.log('Raw Form Value:', formValue);
+  
+      // Get current user
+      const currentUser = this.authService.getCurrentUser();
+      if (!currentUser?.staffID) {
+        console.error('No logged in user found');
+        return;
+      }
+  
+      // Find supplier and product IDs
       const supplier = this.suppliers.find(s => s.supplier_Name === formValue.supplierName);
       const product = this.products.find(p => p.product_Name === formValue.productName);
-      
-      // Handle sundry note ID properly
-      const sundryNoteId = typeof formValue.sundry_Note_ID === 'object' 
-        ? formValue.sundry_Note_ID.sundry_Note_ID 
-        : formValue.sundry_Note_ID;
-
+  
+      // Handle sundry note ID
+      let sundryNoteId: number;
+      if (formValue.sundry_Note_ID) {
+        if (typeof formValue.sundry_Note_ID === 'object') {
+          // If it's an object, get the ID from sundry_Notes_ID
+          sundryNoteId = formValue.sundry_Note_ID.sundry_Notes_ID;
+        } else {
+          // If it's already a number, use it directly
+          sundryNoteId = parseInt(formValue.sundry_Note_ID);
+        }
+      } else {
+        console.error('No sundry note ID found');
+        return;
+      }
+  
+      // Handle GRV ID
+      let grvId: number;
+      if (formValue.gRV_ID) {
+        if (typeof formValue.gRV_ID === 'object') {
+          grvId = formValue.gRV_ID.grV_ID;
+        } else {
+          grvId = parseInt(formValue.gRV_ID);
+        }
+      } else {
+        console.error('No GRV ID found');
+        return;
+      }
+  
       const newIncoming: incoming = {
+        incomingID: 0,
         incoming_Date: new Date(),
-        gRV_ID: formValue.gRV_ID,
-        supplierID: supplier?.supplierID,
-        productID: product?.productID,
-        gross_Weight: formValue.gross_Weight,
-        tare_Weight: formValue.tare_Weight,
-        net_Weight: formValue.net_Weight,
-        comments: formValue.comments,
-        sundry_Note_ID: sundryNoteId,
-        employeeID: 1
+        gross_Weight: parseFloat(formValue.gross_Weight),
+        tare_Weight: parseFloat(formValue.tare_Weight),
+        net_Weight: parseFloat(formValue.net_Weight),
+        supplierID: supplier?.supplierID || 0,
+        productID: product?.productID || 0,
+        employeeID: currentUser.staffID,
+        grV_ID: grvId,
+        comments: formValue.comments || '',
+        sundry_Note_ID: sundryNoteId // Now correctly set
       };
-
+  
+      console.log('Sending to API:', newIncoming);
+  
       this.incomingService.addIncoming(newIncoming).subscribe({
-        next: () => {
+        next: (response) => {
+          console.log('Success:', response);
           this.loadIncomings();
           this.addIncomingForm.reset();
         },
-        error: (error) => console.error('Error adding incoming product:', error)
+        error: (error) => {
+          console.error('Error details:', error);
+          if (error.error && error.error.message) {
+            alert(`Failed to add incoming record: ${error.error.message}`);
+          } else {
+            alert('Failed to add incoming record. Please check the console for details.');
+          }
+        }
       });
+    } else {
+      Object.keys(this.addIncomingForm.controls).forEach(key => {
+        const control = this.addIncomingForm.get(key);
+        if (control?.errors) {
+          console.error(`Validation error in ${key}:`, control.errors);
+        }
+      });
+      alert('Please fill in all required fields correctly.');
     }
   }
-
   deleteIncoming(incomingID: number): void {
     if (confirm('Are you sure you want to delete this incoming product?')) {
       this.incomingService.deleteIncoming(incomingID).subscribe({
@@ -351,12 +429,13 @@ export class ViewIncomingsComponent implements OnInit {
       
       const printHeaders = [
         'Date',
-        'Gross Weight',
-        'Tare Weight',
-        'Net Weight',
-        'GRV ID',
-        'Supplier Name',
-        'Product Name'
+  'Gross Weight',
+  'Tare Weight',
+  'Net Weight',
+  'GRV Number',
+  'Sundry Note',
+  'Supplier Name',
+  'Product Name'
       ];
       
       printHeaders.forEach(header => {
@@ -367,19 +446,23 @@ export class ViewIncomingsComponent implements OnInit {
       this.incomings.data.forEach(row => {
         const supplier = this.suppliers.find(s => s.supplierID === row.supplierID);
         const product = this.products.find(p => p.productID === row.productID);
+        const grv = this.grvList.find(g => g.grV_ID === row.grV_ID);
+        const sundryNote = this.sundryNotesList.find(n => n.sundry_Notes_ID === row.sundry_Note_ID);
         
         tableHtml += '<tr>';
         tableHtml += `<td>${row.incoming_Date ? new Date(row.incoming_Date).toLocaleDateString() : ''}</td>`;
         tableHtml += `<td>${row.gross_Weight || ''}</td>`;
         tableHtml += `<td>${row.tare_Weight || ''}</td>`;
         tableHtml += `<td>${row.net_Weight || ''}</td>`;
-        tableHtml += `<td>${row.gRV_ID || ''}</td>`;
+        tableHtml += `<td>${grv?.grv || ''}</td>`;
+        tableHtml += `<td>${sundryNote?.sundry_Note || ''}</td>`;
         tableHtml += `<td>${supplier?.supplier_Name || ''}</td>`;
         tableHtml += `<td>${product?.product_Name || ''}</td>`;
         tableHtml += '</tr>';
       });
       
       tableHtml += '</tbody></table>';
+      
   
       printWindow.document.write(`
         <html>
@@ -495,7 +578,89 @@ export class ViewIncomingsComponent implements OnInit {
       printWindow.document.close();
     }
   }
+  
   async exportToExcel(): Promise<void> {
+    try {
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet('Incoming Products');
+
+      // Define columns
+      worksheet.columns = [
+        { header: 'Date', key: 'date', width: 15 },
+        { header: 'GRV Number', key: 'grv', width: 15 },
+        { header: 'Sundry Note', key: 'sundryNote', width: 15 },
+        { header: 'Supplier', key: 'supplier', width: 20 },
+        { header: 'Product', key: 'product', width: 20 },
+        { header: 'Gross Weight', key: 'grossWeight', width: 12 },
+        { header: 'Tare Weight', key: 'tareWeight', width: 12 },
+        { header: 'Net Weight', key: 'netWeight', width: 12 },
+        { header: 'Comments', key: 'comments', width: 30 }
+      ];
+    // Style the header row
+    const headerRow = worksheet.getRow(1);
+    headerRow.font = { bold: true };
+    headerRow.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FFE0E0E0' }
+    };
+    headerRow.alignment = { vertical: 'middle', horizontal: 'center' };
+
+    // Add data
+    this.incomings.data.forEach(record => {
+      const supplier = this.suppliers.find(s => s.supplierID === record.supplierID);
+      const product = this.products.find(p => p.productID === record.productID);
+      const grv = this.grvList.find(g => g.grV_ID === record.grV_ID);
+      const sundryNote = this.sundryNotesList.find(n => n.sundry_Notes_ID === record.sundry_Note_ID);
     
+      worksheet.addRow({
+        date: record.incoming_Date ? new Date(record.incoming_Date).toLocaleDateString() : '',
+        grv: grv?.grv || '',
+        sundryNote: sundryNote?.sundry_Note || '',
+        supplier: supplier?.supplier_Name || '',
+        product: product?.product_Name || '',
+        grossWeight: record.gross_Weight,
+        tareWeight: record.tare_Weight,
+        netWeight: record.net_Weight,
+        comments: record.comments
+      });
+    });
+
+
+    // Style all data rows
+    worksheet.eachRow((row, rowNumber) => {
+      if (rowNumber > 1) { // Skip header row
+        row.alignment = { vertical: 'middle', horizontal: 'left' };
+        row.eachCell(cell => {
+          cell.border = {
+            top: { style: 'thin' },
+            left: { style: 'thin' },
+            bottom: { style: 'thin' },
+            right: { style: 'thin' }
+          };
+        });
+      }
+    });
+
+    // Auto-filter
+    worksheet.autoFilter = {
+      from: { row: 1, column: 1 },
+      to: { row: 1, column: 8 }
+    };
+
+    // Generate Excel file
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    
+    // Generate filename with current date
+    const dateStr = new Date().toISOString().split('T')[0];
+    const fileName = `incoming_products_${dateStr}.xlsx`;
+    
+    // Save the file
+    saveAs(blob, fileName);
+  } catch (error) {
+    console.error('Error exporting to Excel:', error);
+    alert('Failed to export to Excel. Please try again.');
+  }
 }
 }
