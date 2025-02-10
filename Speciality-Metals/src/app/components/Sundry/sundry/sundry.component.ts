@@ -236,17 +236,26 @@ private _filterSundryNotes(value: string): sundry[] {
       error: error => console.error('Failed to add sundry:', error)
     });
   }
-  printLabel() {
+  printLabel(event?: Event) {
+    // Prevent the default action (such as form submission)
+    if (event) {
+      event.preventDefault();
+    }
+  
     // Get the current form data
     const formData = this.addSundryForm.value;
-    
+  
+    // Find the selected sundry note to get its value
+    const selectedSundryNote = this.sundryNotes.find(note => note.sundry_Notes_ID === formData.sundry_Note_ID);
+    const sundryNoteValue = selectedSundryNote ? selectedSundryNote.sundry_Note : 'N/A';
+  
     // Create a new window for printing
     const printWindow = window.open('', '_blank');
     if (!printWindow) {
       alert('Please allow popups for printing');
       return;
     }
-
+  
     // Create the label HTML content
     const labelContent = `
       <html>
@@ -271,8 +280,8 @@ private _filterSundryNotes(value: string): sundry[] {
               margin-bottom: 20px;
             }
             @media print {
-              button { 
-                display: none; 
+              body {
+                margin: 0;
               }
             }
           </style>
@@ -280,24 +289,23 @@ private _filterSundryNotes(value: string): sundry[] {
         <body>
           <div class="label-container">
             <div class="label-title">Sundry Product Label</div>
-            <div class="label-item">Product Code: ${formData.productCode || 'N/A'}</div>
             <div class="label-item">Product Name: ${formData.productName || 'N/A'}</div>
-            <div class="label-item">Gross Weight: ${formData.gross_Weight || 0}</div>
-            <div class="label-item">Tare Weight: ${formData.tare_Weight || 0}</div>
-            <div class="label-item">Net Weight: ${formData.net_Weight || 0}</div>
+            <div class="label-item">Sundry Note: ${sundryNoteValue}</div>
+            <div class="label-item">Gross Weight: ${formData.gross_Weight || 0} kg</div>
+            <div class="label-item">Tare Weight: ${formData.tare_Weight || 0} kg</div>
+            <div class="label-item">Net Weight: ${formData.net_Weight || 0} kg</div>
             <div class="label-item">Date: ${new Date().toLocaleDateString()}</div>
             <div class="label-item">Time: ${new Date().toLocaleTimeString()}</div>
           </div>
-          <button onclick="window.print()">Print</button>
         </body>
       </html>`;
-
+  
     // Write to the new window and trigger print
+    printWindow.document.open();
     printWindow.document.write(labelContent);
     printWindow.document.close();
+    printWindow.print();
   }
-
-
   printTable() {
     // Create a new window for printing
     const printWindow = window.open('', '_blank');

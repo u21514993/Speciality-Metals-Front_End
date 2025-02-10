@@ -10,13 +10,17 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatSelectModule } from '@angular/material/select';
 import { OutService } from '../../../services/outgoing.service';
+import { FormControl } from '@angular/forms';
 import { outgoing } from '../../../shared/outgoing';
 import { forkJoin } from 'rxjs';
 import { customer } from '../../../shared/customer';
 import { Product } from '../../../shared/Product';
 import { ProductService } from '../../../services/product.service';
 import { CustService } from '../../../services/customer.service';
+import { sundryservice } from '../../../services/sundry.service';
+import { AuthService } from '../../../services/auth.service';
 import {
   ReactiveFormsModule,
   FormGroup,
@@ -34,6 +38,8 @@ import { saveAs } from 'file-saver';
     CommonModule,
     HttpClientModule,
     MatTableModule,
+    MatAutocompleteModule,
+    MatSelectModule,
     MatPaginatorModule,
     MatIconModule,
     MatButtonModule,
@@ -41,12 +47,16 @@ import { saveAs } from 'file-saver';
     MatInputModule,
     MatAutocompleteModule,
     ReactiveFormsModule,
+    
   ],
   providers: [
     OutService,
     CustService,
+    FormControl,
     ProductService,
-    HttpClient
+    HttpClient,
+    sundryservice,
+    AuthService
   ],
   templateUrl: './outgoing-component.component.html',
   styleUrls: ['./outgoing-component.component.css']
@@ -56,41 +66,49 @@ export class OutgoingComponentComponent implements OnInit {
   addOutgoingForm!: FormGroup;
   outgoings = new MatTableDataSource<outgoing>([]);
   displayedColumns: string[] = [
-    'outgoingID',
+    'sundry_Note',
     'outgoing_Date',
     'gross_Weight',
     'tare_Weight',
     'net_Weight',
-    'del_Note',
     'customerName',
     'productName',
     'actions',
-  ];
+  ]
 
   customers: customer[] = [];
   products: Product[] = [];
-  
+  sundryNotes: any[] = [];
+
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   ngAfterViewInit() {
     this.outgoings.paginator = this.paginator;
   }
+
   constructor(
     private outgoingservice: OutService,
     private fb: FormBuilder,
     private customerService: CustService,
-    private productService: ProductService
+    private productService: ProductService,
+    private sundryService: sundryservice,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
     this.initializeForm();
     this.loadAllData();
     this.setupFormListeners();
+    this.addOutgoingForm.get('sundry_Note')?.valueChanges.subscribe(value => {
+      console.log('Selected sundry note ID:', value);
+      const selectedNote = this.sundryNotes.find(note => note.sundry_Notes_ID === value);
+      console.log('Selected sundry note:', selectedNote);
+    });
   }
 
   private initializeForm(): void {
     this.addOutgoingForm = this.fb.group({
-      del_Note: ['', Validators.required],
+      sundry_Note: ['', Validators.required], // Ensure this matches the form control name
       customerName: ['', Validators.required],
       customerCode: ['', Validators.required],
       productName: ['', Validators.required],
@@ -105,15 +123,19 @@ export class OutgoingComponentComponent implements OnInit {
     forkJoin({
       customers: this.customerService.getAllCustomers(),
       products: this.productService.getAllProducts(),
+      sundryNotes: this.sundryService.getSundryNotes()
     }).subscribe({
-      next: ({ customers, products }) => {
+      next: ({ customers, products, sundryNotes }) => {
+        console.log('Sundry Notes:', sundryNotes); // Add this line
         this.customers = customers;
         this.products = products;
+        this.sundryNotes = sundryNotes;
         this.loadOutgoings();
       },
       error: (error) => console.error('Error loading data:', error)
     });
   }
+
 
   private setupFormListeners(): void {
     // Customer name change listener
@@ -184,10 +206,13 @@ export class OutgoingComponentComponent implements OnInit {
         const mappedData = data.map(outgoing => {
           const customer = this.customers.find(c => c.customerID === outgoing.customerID);
           const product = this.products.find(p => p.productID === outgoing.productID);
+          const sundryNote = this.sundryNotes.find(note => note.sundry_Notes_ID === outgoing.sundry_Note_ID); // Get the sundry note
+  
           return {
             ...outgoing,
             customerName: customer?.customer_Name || 'Unknown',
-            productName: product?.product_Name || 'Unknown'
+            productName: product?.product_Name || 'Unknown',
+            sundry_Note: sundryNote?.sundry_Note || 'Unknown' // Map the sundry note value
           };
         });
         this.outgoings.data = mappedData;
@@ -197,22 +222,28 @@ export class OutgoingComponentComponent implements OnInit {
     });
   }
 
+  editoutgoings(): void{
+
+  }
+
   onAddSubmit(): void {
     if (this.addOutgoingForm.valid) {
       const formValue = this.addOutgoingForm.getRawValue();
       const customer = this.customers.find(c => c.customer_Name === formValue.customerName);
       const product = this.products.find(p => p.product_Name === formValue.productName);
-      
+      const currentUser  = this.authService.getCurrentUser (); // Get the logged-in user
+  
       const newOutgoing: outgoing = {
         outgoing_Date: new Date(),
-        del_Note: formValue.del_Note,
+        sundry_Note_ID: formValue.sundry_Note, // Use the selected sundry note ID
         customerID: customer?.customerID,
         productID: product?.productID,
         gross_Weight: formValue.gross_Weight,
         tare_Weight: formValue.tare_Weight,
-        net_Weight: formValue.net_Weight
+        net_Weight: formValue.net_Weight,
+        employeeID: currentUser ?.staffID // Assuming the Staff object has an 'id' property
       };
-
+  
       this.outgoingservice.addOutgoing(newOutgoing).subscribe({
         next: () => {
           this.loadOutgoings();
@@ -245,7 +276,8 @@ export class OutgoingComponentComponent implements OnInit {
         'Net Weight',
         'Del Note',
         'Customer Name',
-        'Product Name'
+        'Product Name',
+        'Sundry Note'  // Added new header
       ];
       
       // Create headers
@@ -256,9 +288,10 @@ export class OutgoingComponentComponent implements OnInit {
       
       // Add data rows
       this.outgoings.data.forEach(row => {
-        // Find customer and product names
+        // Find customer, product, and sundry note
         const customer = this.customers.find(c => c.customerID === row.customerID);
         const product = this.products.find(p => p.productID === row.productID);
+        const sundryNote = this.sundryNotes.find(note => note.sundry_Notes_ID === row.sundry_Note_ID);
         
         tableHtml += '<tr>';
         // Format date with null check
@@ -266,9 +299,10 @@ export class OutgoingComponentComponent implements OnInit {
         tableHtml += `<td>${row.gross_Weight || ''}</td>`;
         tableHtml += `<td>${row.tare_Weight || ''}</td>`;
         tableHtml += `<td>${row.net_Weight || ''}</td>`;
-        tableHtml += `<td>${row.del_Note || ''}</td>`;
+        tableHtml += `<td>${row.sundry_Note_ID || ''}</td>`;
         tableHtml += `<td>${customer?.customer_Name || ''}</td>`;
         tableHtml += `<td>${product?.product_Name || ''}</td>`;
+        tableHtml += `<td>${sundryNote?.sundry_Note || ''}</td>`; // Added sundry note value
         tableHtml += '</tr>';
       });
       
@@ -332,31 +366,42 @@ export class OutgoingComponentComponent implements OnInit {
     }
   }
 
-  printLabel() {
+  printLabel(event?: Event) {
+    // Prevent any form submission
+    if (event) {
+      event.preventDefault();
+    }
+  
     // Get current date and time
     const now = new Date();
     const date = now.toLocaleDateString();
     const time = now.toLocaleTimeString();
-
-    // Safely get form values with null checks
-    const productName = this.addOutgoingForm.get('productName')?.value || '';
-    const delNote = this.addOutgoingForm.get('del_Note')?.value || '';
-    const grossWeight = this.addOutgoingForm.get('gross_Weight')?.value || '0';
-    const tareWeight = this.addOutgoingForm.get('tare_Weight')?.value || '0';
-    const netWeight = this.addOutgoingForm.get('net_Weight')?.value || '0';
-
+  
+    // Create a snapshot of form values without triggering form submission
+    const formSnapshot = {
+      productName: this.addOutgoingForm.get('productName')?.value || '',
+      sundryNoteId: this.addOutgoingForm.get('sundry_Note')?.value || '',
+      grossWeight: this.addOutgoingForm.get('gross_Weight')?.value || '0',
+      tareWeight: this.addOutgoingForm.get('tare_Weight')?.value || '0',
+      netWeight: this.addOutgoingForm.get('net_Weight')?.value || '0'
+    };
+  
+    const sundryNote = this.sundryNotes.find(
+      note => note.sundry_Notes_ID === formSnapshot.sundryNoteId
+    )?.sundry_Note || 'Unknown';
+  
     // Create the content for the label
     const printContent = `
       <div style="font-family: Arial, sans-serif; padding: 10px; width: 300px;">
-        <div style="font-size: 16px; font-weight: bold;">${productName}</div>
-        <div style="margin-top: 5px;">Del Note: ${delNote}</div>
-        <div style="margin-top: 5px;">Gross: ${grossWeight} kg</div>
-        <div style="margin-top: 5px;">Tare: ${tareWeight} kg</div>
-        <div style="margin-top: 5px;">Net: ${netWeight} kg</div>
+        <div style="font-size: 16px; font-weight: bold;">${formSnapshot.productName}</div>
+        <div style="margin-top: 5px;">Sundry Note: ${sundryNote}</div>
+        <div style="margin-top: 5px;">Gross: ${formSnapshot.grossWeight} kg</div>
+        <div style="margin-top: 5px;">Tare: ${formSnapshot.tareWeight} kg</div>
+        <div style="margin-top: 5px;">Net: ${formSnapshot.netWeight} kg</div>
         <div style="margin-top: 10px; font-size: 12px;">${date} ${time}</div>
       </div>
     `;
-
+  
     // Create a new window for printing
     const printWindow = window.open('', '_blank');
     if (printWindow) {
@@ -367,7 +412,7 @@ export class OutgoingComponentComponent implements OnInit {
             <style>
               @media print {
                 @page {
-                  size: 3in 2in;  /* Adjust size according to your label dimensions */
+                  size: 3in 2in;
                   margin: 0;
                 }
                 body {
@@ -379,11 +424,18 @@ export class OutgoingComponentComponent implements OnInit {
           <body>
             ${printContent}
             <script>
+              // Disable any form-related events
+              window.onsubmit = function(e) {
+                e.preventDefault();
+                return false;
+              };
+              
               window.onload = function() {
                 window.print();
+                // Use a simple close without any callbacks
                 window.onafterprint = function() {
                   window.close();
-                }
+                };
               }
             </script>
           </body>
@@ -401,12 +453,12 @@ export class OutgoingComponentComponent implements OnInit {
     // Define columns
     worksheet.columns = [
       { header: 'Date', key: 'date', width: 12 },
-      { header: 'Delivery Note', key: 'delNote', width: 15 },
       { header: 'Customer Name', key: 'customerName', width: 30 },
       { header: 'Product Name', key: 'productName', width: 30 },
       { header: 'Gross Weight', key: 'grossWeight', width: 15 },
       { header: 'Tare Weight', key: 'tareWeight', width: 15 },
-      { header: 'Net Weight', key: 'netWeight', width: 15 }
+      { header: 'Net Weight', key: 'netWeight', width: 15 },
+      { header: 'Sundry Note', key: 'sundryNote', width: 30 }  // Added new column
     ];
   
     // Get visible rows from the paginator
@@ -418,15 +470,16 @@ export class OutgoingComponentComponent implements OnInit {
     const rows = visibleRows.map(row => {
       const customer = this.customers.find(c => c.customerID === row.customerID);
       const product = this.products.find(p => p.productID === row.productID);
+      const sundryNote = this.sundryNotes.find(note => note.sundry_Notes_ID === row.sundry_Note_ID);
   
       return {
         date: row.outgoing_Date ? new Date(row.outgoing_Date) : null,
-        delNote: row.del_Note,
         customerName: customer?.customer_Name || '',
         productName: product?.product_Name || '',
         grossWeight: row.gross_Weight || 0,
         tareWeight: row.tare_Weight || 0,
-        netWeight: row.net_Weight || 0
+        netWeight: row.net_Weight || 0,
+        sundryNote: sundryNote?.sundry_Note || ''  // Added sundry note value
       };
     });
   

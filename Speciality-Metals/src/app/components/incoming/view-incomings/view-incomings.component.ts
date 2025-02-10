@@ -312,13 +312,13 @@ export class ViewIncomingsComponent implements OnInit {
           const sundryNote = this.sundryNotesList.find(
             note => note.sundry_Notes_ID?.toString() === incoming.sundry_Note_ID?.toString()
           );
-          
+  
           return {
             ...incoming,
             supplierName: supplier?.supplier_Name || 'Unknown',
             productName: product?.product_Name || 'Unknown',
             grvNumber: grv?.grv || 'Unknown',
-            sundryNoteNumber: sundryNote?.sundry_Note || 'Unknown'
+            sundryNoteNumber: sundryNote?.sundry_Note || 'Unknown' // Change this line
           };
         });
         this.incomings.data = mappedData;
@@ -526,24 +526,23 @@ export class ViewIncomingsComponent implements OnInit {
     const now = new Date();
     const date = now.toLocaleDateString();
     const time = now.toLocaleTimeString();
-
+  
     const productName = this.addIncomingForm.get('productName')?.value || '';
-    const grvId = this.addIncomingForm.get('gRV_ID')?.value || '';
+    const sundryNote = this.addIncomingForm.get('sundry_Note_ID')?.value?.sundry_Note || ''; // Get the sundry note value
     const grossWeight = this.addIncomingForm.get('gross_Weight')?.value || '0';
     const tareWeight = this.addIncomingForm.get('tare_Weight')?.value || '0';
     const netWeight = this.addIncomingForm.get('net_Weight')?.value || '0';
-
+  
     const printContent = `
       <div style="font-family: Arial, sans-serif; padding: 10px; width: 300px;">
-        <div style="font-size: 16px; font-weight: bold;">${productName}</div>
-        <div style="margin-top: 5px;">GRV ID: ${grvId}</div>
+        <div style="font-size: 16px; font-weight: bold;">Sundry Note: ${sundryNote}</div>
         <div style="margin-top: 5px;">Gross: ${grossWeight} kg</div>
         <div style="margin-top: 5px;">Tare: ${tareWeight} kg</div>
         <div style="margin-top: 5px;">Net: ${netWeight} kg</div>
         <div style="margin-top: 10px; font-size: 12px;">${date} ${time}</div>
       </div>
     `;
-
+  
     const printWindow = window.open('', '_blank');
     if (printWindow) {
       printWindow.document.write(`
@@ -567,9 +566,6 @@ export class ViewIncomingsComponent implements OnInit {
             <script>
               window.onload = function() {
                 window.print();
-                window.onafterprint = function() {
-                  window.close();
-                }
               }
             </script>
           </body>
@@ -578,7 +574,6 @@ export class ViewIncomingsComponent implements OnInit {
       printWindow.document.close();
     }
   }
-  
   async exportToExcel(): Promise<void> {
     try {
       const workbook = new ExcelJS.Workbook();
