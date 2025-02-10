@@ -1,4 +1,5 @@
-<div class="outgoing-container">
+<div class="sundry-container">
+  <!-- Header section -->
   <div class="page-header">
     <h1>Outgoing Products</h1>
     <p class="page-description" id="desc">
@@ -6,161 +7,168 @@
     </p>
   </div>
 
-  <!-- Add Outgoing Form -->
-  <form [formGroup]="addOutgoingForm" (ngSubmit)="onAddSubmit()" class="outgoing-form">
-    <div class="input-row">
-      <mat-form-field class="form-group">
-        <mat-label>Del Note</mat-label>
-        <input matInput formControlName="del_Note" type="text" />
-      </mat-form-field>
-    </div>
-    
-    <div class="input-row">
-      <mat-form-field class="form-group">
-        <mat-label>Customer Name</mat-label>
-        <input matInput formControlName="customerName" type="text" [matAutocomplete]="customerAutoName" />
-        <mat-autocomplete #customerAutoName="matAutocomplete">
-          <mat-option *ngFor="let customer of customers" [value]="customer.customer_Name">
-            {{customer.customer_Name}}
-          </mat-option>
-        </mat-autocomplete>
-      </mat-form-field>
-      
-      <mat-form-field class="form-group">
-        <mat-label>Customer Code</mat-label>
-        <input matInput formControlName="customerCode" type="text" [matAutocomplete]="customerAutoCode" />
-        <mat-autocomplete #customerAutoCode="matAutocomplete">
-          <mat-option *ngFor="let customer of customers" [value]="customer.customer_Code">
-            {{customer.customer_Code}}
-          </mat-option>
-        </mat-autocomplete>
-      </mat-form-field>
-      
-      <mat-form-field class="form-group">
-        <mat-label>Product Name</mat-label>
-        <input matInput formControlName="productName" type="text" [matAutocomplete]="productAutoName" />
-        <mat-autocomplete #productAutoName="matAutocomplete">
-          <mat-option *ngFor="let product of products" [value]="product.product_Name">
-            {{product.product_Name}}
-          </mat-option>
-        </mat-autocomplete>
-      </mat-form-field>
-      
-      <mat-form-field class="form-group">
-        <mat-label>Product Code</mat-label>
-        <input matInput formControlName="productCode" type="text" [matAutocomplete]="productAutoCode" />
-        <mat-autocomplete #productAutoCode="matAutocomplete">
-          <mat-option *ngFor="let product of products" [value]="product.product_Code">
-            {{product.product_Code}}
-          </mat-option>
-        </mat-autocomplete>
-      </mat-form-field>
-    </div>
-    
-    <div class="input-row">
-      <mat-form-field class="form-group">
-        <mat-label>Gross Weight</mat-label>
-        <input matInput formControlName="gross_Weight" type="number" min="0" />
-      </mat-form-field>
-      
-      <mat-form-field class="form-group">
-        <mat-label>Tare Weight</mat-label>
-        <input matInput formControlName="tare_Weight" type="number" min="0" />
-      </mat-form-field>
-      
-      <mat-form-field class="form-group">
-        <mat-label>Net Weight</mat-label>
-        <input matInput formControlName="net_Weight" type="number" readonly />
-      </mat-form-field>
-    </div>
-    
-    <div class="input-row">
-      <button mat-raised-button color="primary" type="submit" [disabled]="!addOutgoingForm.valid">Add</button>
-    </div>
+  <!-- Form section -->
+  <div class="form-section">
+    <form [formGroup]="addOutgoingForm" (ngSubmit)="onAddSubmit()" class="sundry-form">
+      <!-- Sundry Note select -->
+      <div class="form-row">
+        <mat-form-field appearance="fill">
+          <mat-label>Sundry Note</mat-label>
+          <mat-select formControlName="sundry_Note" required>
+            <mat-option *ngFor="let note of sundryNotes" [value]="note.sundry_Notes_ID">
+              {{ note.sundry_Note }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
 
-    <div class="input-row">
-      <button mat-raised-button class="print" (click)="printLabel()">
+      <!-- Customer and Product inputs -->
+      <div class="form-row">
+        <div class="form-column">
+          <mat-form-field appearance="fill">
+            <mat-label>Customer Name</mat-label>
+            <input matInput formControlName="customerName" [matAutocomplete]="customerAutoName" required>
+            <mat-autocomplete #customerAutoName="matAutocomplete">
+              <mat-option *ngFor="let customer of customers" [value]="customer.customer_Name">
+                {{customer.customer_Name}}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill">
+            <mat-label>Customer Code</mat-label>
+            <input matInput formControlName="customerCode" [matAutocomplete]="customerAutoCode" required>
+            <mat-autocomplete #customerAutoCode="matAutocomplete">
+              <mat-option *ngFor="let customer of customers" [value]="customer.customer_Code">
+                {{customer.customer_Code}}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+        </div>
+
+        <div class="form-column">
+          <mat-form-field appearance="fill">
+            <mat-label>Product Name</mat-label>
+            <input matInput formControlName="productName" [matAutocomplete]="productAutoName" required>
+            <mat-autocomplete #productAutoName="matAutocomplete">
+              <mat-option *ngFor="let product of products" [value]="product.product_Name">
+                {{product.product_Name}}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill">
+            <mat-label>Product Code</mat-label>
+            <input matInput formControlName="productCode" [matAutocomplete]="productAutoCode" required>
+            <mat-autocomplete #productAutoCode="matAutocomplete">
+              <mat-option *ngFor="let product of products" [value]="product.product_Code">
+                {{product.product_Code}}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- Weight inputs -->
+      <div class="form-row">
+        <mat-form-field appearance="fill">
+          <mat-label>Gross Weight</mat-label>
+          <input matInput formControlName="gross_Weight" type="number" min="0" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Tare Weight</mat-label>
+          <input matInput formControlName="tare_Weight" type="number" min="0" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Net Weight</mat-label>
+          <input matInput formControlName="net_Weight" type="number" readonly>
+        </mat-form-field>
+      </div>
+
+      <!-- Form buttons -->
+      <div class="button-row">
+        <button mat-raised-button color="primary" type="submit" [disabled]="!addOutgoingForm.valid">
+          Add
+        </button>
+        <button mat-raised-button (click)="printLabel($event)">
+          <mat-icon>print</mat-icon>
+          Label
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Table section -->
+  <div class="table-section">
+    <h2 class="mat-title">Outgoing Records</h2>
+    
+    <table mat-table [dataSource]="outgoings" class="mat-elevation-z8">
+      <!-- Sundry Note Column (replaced Outgoing ID) -->
+      <ng-container matColumnDef="sundry_Note">
+        <th mat-header-cell *matHeaderCellDef>Sundry Note</th>
+        <td mat-cell *matCellDef="let outgoing">{{ outgoing.sundry_Note }}</td>
+      </ng-container>
+      
+      <ng-container matColumnDef="outgoing_Date">
+        <th mat-header-cell *matHeaderCellDef>Date</th>
+        <td mat-cell *matCellDef="let outgoing">{{ outgoing.outgoing_Date | date: 'shortDate' }}</td>
+      </ng-container>
+      
+      <ng-container matColumnDef="gross_Weight">
+        <th mat-header-cell *matHeaderCellDef>Gross Weight</th>
+        <td mat-cell *matCellDef="let outgoing">{{ outgoing.gross_Weight }}</td>
+      </ng-container>
+      
+      <ng-container matColumnDef="tare_Weight">
+        <th mat-header-cell *matHeaderCellDef>Tare Weight</th>
+        <td mat-cell *matCellDef="let outgoing">{{ outgoing.tare_Weight }}</td>
+      </ng-container>
+      
+      <ng-container matColumnDef="net_Weight">
+        <th mat-header-cell *matHeaderCellDef>Net Weight</th>
+        <td mat-cell *matCellDef="let outgoing">{{ outgoing.net_Weight }}</td>
+      </ng-container>
+      
+      <ng-container matColumnDef="customerName">
+        <th mat-header-cell *matHeaderCellDef>Customer Name</th>
+        <td mat-cell *matCellDef="let outgoing">{{ outgoing.customerName }}</td>
+      </ng-container>
+      
+      <ng-container matColumnDef="productName">
+        <th mat-header-cell *matHeaderCellDef>Product Name</th>
+        <td mat-cell *matCellDef="let outgoing">{{ outgoing.productName }}</td>
+      </ng-container>
+      
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <td mat-cell *matCellDef="let outgoing">
+          <button mat-icon-button color="primary" (click)="editoutgoings()">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="deleteOutgoings(outgoing.outgoingID)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+  
+      <!-- Header and Row Definitions -->
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+  
+    <div class="button-row">
+      <button mat-raised-button (click)="printTable()">
         <mat-icon>print</mat-icon>
-        Label
+        Print
+      </button>
+      <button mat-raised-button (click)="exportToExcel()">
+        <mat-icon>table_view</mat-icon>
+        Excel
       </button>
     </div>
-
-  </form>
-    <div class="outgoing-container">
-        <!-- Table Headers and Add Form -->
-        
-        <h2 class="mat-title" id="table-title">Outgoing Records</h2>
-        <table mat-table [dataSource]="outgoings" class="mat-elevation-z8 product-table">
-          <ng-container matColumnDef="outgoingID">
-            <th mat-header-cell *matHeaderCellDef>ID</th>
-            <td mat-cell *matCellDef="let outgoing">{{ outgoing.outgoingID }}</td>
-          </ng-container>
-      
-          <ng-container matColumnDef="outgoing_Date">
-            <th mat-header-cell *matHeaderCellDef>Date</th>
-            <td mat-cell *matCellDef="let outgoing">{{ outgoing.outgoing_Date | date: 'shortDate' }}</td>
-          </ng-container>
-      
-          <ng-container matColumnDef="gross_Weight">
-            <th mat-header-cell *matHeaderCellDef>Gross Weight</th>
-            <td mat-cell *matCellDef="let outgoing">{{ outgoing.gross_Weight }}</td>
-          </ng-container>
-      
-          <ng-container matColumnDef="tare_Weight">
-            <th mat-header-cell *matHeaderCellDef>Tare Weight</th>
-            <td mat-cell *matCellDef="let outgoing">{{ outgoing.tare_Weight }}</td>
-          </ng-container>
-      
-          <ng-container matColumnDef="net_Weight">
-            <th mat-header-cell *matHeaderCellDef>Net Weight</th>
-            <td mat-cell *matCellDef="let outgoing">{{ outgoing.net_Weight }}</td>
-          </ng-container>
-      
-          <ng-container matColumnDef="del_Note">
-            <th mat-header-cell *matHeaderCellDef>Del Note</th>
-            <td mat-cell *matCellDef="let outgoing">{{ outgoing.del_Note }}</td>
-          </ng-container>
-      
-          <!-- Update the variable to outgoing.customerName -->
-          <ng-container matColumnDef="customerName">
-            <th mat-header-cell *matHeaderCellDef>Customer Name</th>
-            <td mat-cell *matCellDef="let outgoing">{{ outgoing.customerName }}</td>
-          </ng-container>
-      
-          <!-- Update the variable to outgoing.productName -->
-          <ng-container matColumnDef="productName">
-            <th mat-header-cell *matHeaderCellDef>Product Name</th>
-            <td mat-cell *matCellDef="let outgoing">{{ outgoing.productName }}</td>
-          </ng-container>
-      
-          <ng-container matColumnDef="actions">
-            <th mat-header-cell *matHeaderCellDef>Actions</th>
-            <td mat-cell *matCellDef="let outgoing">
-              <button mat-icon-button color="primary">
-                <mat-icon>edit</mat-icon>
-              </button>
-              <button mat-icon-button color="warn" (click)="deleteOutgoings(outgoing.outgoingID)">
-                <mat-icon>delete</mat-icon>
-              </button>
-            </td>
-          </ng-container>
-      
-          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-        </table>
-      
-        <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
-        <div class="input-row">
-        <button mat-raised-button class="print" (click)="printTable()">
-          <mat-icon>print</mat-icon>
-          Print
-        </button>
-        </div>
-        <div class="input-row">
-        <button mat-raised-button class="export-excel" (click)="exportToExcel()">
-          <mat-icon>table_view</mat-icon>
-          Excel
-        </button>
-      </div>
-
-      </div>
+  </div>
+</div>

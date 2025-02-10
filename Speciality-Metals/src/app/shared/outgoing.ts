@@ -4,7 +4,8 @@ export interface outgoing {
   gross_Weight?: number;
   tare_Weight?: number;
   net_Weight?: number;
-  del_Note?: string;
+  sundry_Note_ID?: string;
   customerID?: number;
   productID?: number;
+  employeeID?: number; // Add this line
 }
