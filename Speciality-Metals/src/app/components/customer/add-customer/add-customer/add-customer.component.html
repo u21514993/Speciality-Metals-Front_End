@@ -7,19 +7,41 @@
   
   <div class="customer-container">
     <form [formGroup]="CustomerForm" (ngSubmit)="onSubmit()">
-        <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Customer Name</mat-label>
-            <input matInput placeholder="Enter customer name" formControlName="customer_Name" />
-          </mat-form-field>
-          
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Phone Number</mat-label>
-            <input matInput placeholder="Enter phone number" type="tel" formControlName="phone_Number" />
-          </mat-form-field>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Customer Name</mat-label>
+        <input matInput placeholder="Enter customer name" formControlName="customer_Name" />
+      </mat-form-field>
+      
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Customer Code</mat-label>
+        <input matInput placeholder="Enter customer code" formControlName="customer_Code" />
+      </mat-form-field>
+      
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Phone Number</mat-label>
+        <input matInput placeholder="Enter phone number" type="tel" formControlName="phone_Number" />
+      </mat-form-field>
   
       <div class="form-actions">
         <button mat-raised-button color="primary" type="submit">Add Customer</button>
         <button mat-raised-button color="warn" type="button" (click)="onCancel()">Cancel</button>
       </div>
+      <div class="excel-import">
+        <input
+          type="file"
+          #fileInput
+          style="display: none"
+          (change)="onFileSelect($event)"
+          accept=".xlsx, .xls"
+        />
+        <button 
+          mat-raised-button 
+          color="accent" 
+          type="button" 
+          (click)="fileInput.click()">
+          Import Excel
+        </button>
+      </div>
+    
     </form>
   </div>
