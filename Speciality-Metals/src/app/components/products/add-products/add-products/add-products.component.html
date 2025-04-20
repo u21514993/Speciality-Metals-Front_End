@@ -1,22 +1,56 @@
 <mat-toolbar color="primary">
-    <span class="heading">Speciality Metals</span>
-    <span class="spacer"></span>
-    <a mat-button color="warn" routerLink="/logout">Log out</a>
-    <img class="photo" src=".../src/assets/Special_Metals_Corporation_logo.svg.png" alt="Logo">
-  </mat-toolbar>
+  <span class="heading">Speciality Metals</span>
+  <span class="spacer"></span>
+  <a mat-button color="warn" routerLink="/logout">Log out</a>
+  <img class="photo" src=".../src/assets/Special_Metals_Corporation_logo.svg.png" alt="Logo">
+</mat-toolbar>
+
+<div class="product-container">
+  <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+    <mat-form-field appearance="fill">
+      <mat-label>Product Name</mat-label>
+      <input matInput formControlName="product_Name" />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Product Code</mat-label>
+      <input matInput formControlName="product_Code" />
+    </mat-form-field>
+
+    <div class="form-actions">
+      <button mat-raised-button color="primary" type="submit">Add Product</button>
+      <button mat-raised-button color="warn" type="button" (click)="onCancel()">Cancel</button>
+    </div>
+  </form>
   
-  <div class="product-container">
-    <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
-  
-      <mat-form-field appearance="fill">
-        <mat-label>Product Name</mat-label>
-        <input matInput formControlName="Product_Name" />
-      </mat-form-field>
-  
-      <div class="form-actions">
-        <button mat-raised-button color="primary" type="submit">Add Product</button>
-        <button mat-raised-button color="warn" type="button" (click)="onCancel()">Cancel</button>
-      </div>
-    </form>
+   <!-- Excel File Import Section -->
+   <div class="import-section">
+    <h3>Import Products from Excel</h3>
+    <div class="file-upload-container">
+      <input type="file" 
+             #fileInput
+             accept=".xlsx,.xls,.csv"
+             style="display: none"
+             (change)="onFileSelected($event)">
+      <button mat-raised-button 
+              color="accent" 
+              type="button" 
+              (click)="fileInput.click()">
+        <mat-icon>upload_file</mat-icon>
+        Select Excel File
+      </button>
+      <span *ngIf="selectedFile">{{selectedFile.name}}</span>
+    </div>
+    <button mat-raised-button 
+            color="primary" 
+            [disabled]="!selectedFile || isUploading" 
+            (click)="uploadFile()">
+      Import Products
+    </button>
+    
+    <div *ngIf="isUploading" class="upload-progress">
+      <mat-progress-bar mode="determinate" [value]="progress"></mat-progress-bar>
+      <p>Processed {{processedProducts}} of {{totalProducts}} products ({{progress}}%)</p>
+    </div>
   </div>
-  
+</div>

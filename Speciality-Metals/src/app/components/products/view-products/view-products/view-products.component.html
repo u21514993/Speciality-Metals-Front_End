@@ -8,7 +8,7 @@
 <div class="product-list-container">
   <div class="product-list">
     <h2>Product List</h2>
-    <button mat-raised-button color="primary" routerLink="/add-product">Add Product</button>
+    <button mat-raised-button color="primary" routerLink="/add-products">Add Product</button>
     <table mat-table [dataSource]="products" class="mat-elevation-z8">
 
       <!-- Product Name Column -->
@@ -21,7 +21,8 @@
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef> Actions </th>
         <td mat-cell *matCellDef="let element">
-          <button mat-icon-button color="warn" (click)="deleteProduct(element.ProductID)">
+          <button mat-icon-button color="warn" (click)="deleteProduct(element.productID)">
+
             <mat-icon>delete</mat-icon>
           </button>
           <button mat-icon-button color="primary" (click)="openEditPopup(element)">

@@ -26,3 +26,41 @@
     margin-left: 10px;
   }
   
+  .import-section {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    border-top: 1px solid #ddd;
+  }
+  
+  .file-upload-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .file-upload-container span {
+    margin-left: 10px;
+    font-style: italic;
+  }
+  .import-section {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    border-top: 1px solid #ddd;
+  }
+  
+  .file-upload-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .file-upload-container span {
+    margin-left: 10px;
+    font-style: italic;
+  }
+  
+  .upload-progress {
+    margin-top: 1rem;
+  }
