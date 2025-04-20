@@ -1,54 +1,45 @@
-.btn-primary {
-    background: linear-gradient(45deg, #1e90ff, #00bfff);
-    border: none;
-    color: white;
-    padding: 12px 24px;
-    text-align: center;
-    text-transform: uppercase;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    font-weight: bold;
-    letter-spacing: 2px;
-    border-radius: 30px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    transition: all 0.3s ease-in-out;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .btn-primary:hover {
-    background: linear-gradient(45deg, #00bfff, #1e90ff);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
-    transform: scale(1.05);
-  }
-  
-  .btn-primary:active {
-    transform: scale(0.98);
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
-  }
-  
-  .btn-primary::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 300%;
-    height: 300%;
-    background: rgba(255, 255, 255, 0.15);
-    transition: all 0.75s;
-    border-radius: 50%;
-    z-index: 0;
-    transform: translate(-50%, -50%) scale(0.1);
-  }
-  
-  .btn-primary:hover::before {
-    transform: translate(-50%, -50%) scale(1);
-  }
-  
-  .btn-primary span {
-    position: relative;
-    z-index: 1;
-  }
-  
+.home-container {
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.row {
+  width: 100%;
+  margin-bottom: 15px; /* Adjusted for better spacing between rows */
+}
+
+.menu-card {
+  width: 50%; /* Ensure the card takes full width */
+  margin-bottom: 25px; /* Space between each card */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+  box-shadow: none; /* Remove the shadow */
+  color: black;
+}
+
+.menu-button {
+  width: 100%;
+  height: 80px; /* Increase button height */
+  font-size: 18px; /* Increase font size */
+  background-color: white;
+  color: black;
+  border-radius: 8px;
+}
+
+.menu-button mat-icon {
+  margin-right: 8px;
+  font-size: 18px; /* Adjust icon size */
+}
+
+.spacer {
+  flex: 1 1 auto;
+  text-align: center;
+}
+
+.photo{
+  font-size: 20;
+}

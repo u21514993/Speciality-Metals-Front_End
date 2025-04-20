@@ -1,1 +1,36 @@
-<button class="btn btn-primary" (click)="goToViewIncomings()">View Incomings</button>
+<mat-toolbar color="primary">
+    <span class="heading">Speciality Metals</span>
+    <span class="spacer"></span>
+    <a mat-button color="warn" routerLink="/logout">Log out</a>
+    <img class="photo"  src=".../src/assets/Special_Metals_Corporation_logo.svg.png">
+  </mat-toolbar>
+  
+  <div class="home-container">
+<mat-card class="menu-card">
+    <button mat-raised-button class="menu-button" routerLink="/supplier" >
+      <mat-icon>attach_money</mat-icon> Supplier
+    </button>
+  </mat-card>
+  <mat-card class="menu-card">
+    <button mat-raised-button class="menu-button" routerLink="/employee-home" >
+      <mat-icon>person</mat-icon> Staff 
+    </button>
+  </mat-card>
+  
+  <mat-card class="menu-card">
+    <button mat-raised-button class="menu-button" routerLink="/reporting" >
+      <mat-icon>settings</mat-icon> Reporting 
+    </button>
+  </mat-card>
+  
+  <mat-card class="menu-card">
+    <button mat-raised-button class="menu-button" routerLink="/products">
+      <mat-icon>inventory</mat-icon> Products 
+    </button>
+  </mat-card>
+  <mat-card class="menu-card">
+    <button mat-raised-button class="menu-button" routerLink="/customer">
+      <mat-icon>person</mat-icon> Customers 
+    </button>
+  </mat-card>
+  </div>
