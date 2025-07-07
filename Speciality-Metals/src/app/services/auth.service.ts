@@ -23,6 +23,7 @@ export class AuthService {
   }
 
   private loadStoredUser(): void {
+  if (typeof window !== 'undefined') {
     const storedUser = localStorage.getItem('currentUser');
     if (storedUser) {
       try {
@@ -34,6 +35,7 @@ export class AuthService {
       }
     }
   }
+}
 
   login(employeeCode: string): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this.apiUrl}/login`, { employeeCode }).pipe(
@@ -59,11 +61,13 @@ export class AuthService {
     return !!this.getToken() && !!this.getCurrentUser();
   }
 
-  logout(): void {
+ logout(): void {
+  if (typeof window !== 'undefined') {
     localStorage.removeItem('token');
     localStorage.removeItem('currentUser');
-    this.currentUserSubject.next(null);
   }
+  this.currentUserSubject.next(null);
+}
 
   // Rest of your service methods remain the same
   getAllStaff(): Observable<Staff[]> {

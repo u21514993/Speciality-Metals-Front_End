@@ -1,4 +1,12 @@
+<div class="global-top-buttons" *ngIf="showBackButton">
+  <button mat-icon-button (click)="goBack()" aria-label="Back">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
 
+  <button mat-icon-button (click)="logout()" aria-label="Logout">
+    <mat-icon>logout</mat-icon>
+  </button>
+</div>
   <!-- Main Content -->
   <router-outlet></router-outlet>
   
