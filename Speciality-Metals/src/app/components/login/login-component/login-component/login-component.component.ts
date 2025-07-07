@@ -11,6 +11,8 @@ import { MatSnackBar, MatSnackBarAction } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';  // Correct import from Angular
 import { Observable } from 'rxjs';
 import { Staff } from '../../../../shared/Staff';
+import { MatIconModule } from '@angular/material/icon';
+
 @Component({
   selector: 'app-login-component',
   standalone: true,
@@ -21,7 +23,7 @@ import { Staff } from '../../../../shared/Staff';
     MatButtonModule,
     MatCardModule,
     ReactiveFormsModule,
-    MatSnackBarAction],
+  MatIconModule],
   templateUrl: './login-component.component.html',
   styleUrl: './login-component.component.css',
   providers: [AuthService],
@@ -30,6 +32,8 @@ export class LoginComponentComponent {
   loginForm: FormGroup;
   loginError: string | null = null;
   currentUser$: Observable<Staff | null>;
+  hidePassword = true;
+
 
   constructor(
     private fb: FormBuilder,
@@ -41,6 +45,10 @@ export class LoginComponentComponent {
       employeeCode: ['', Validators.required],
     });
     this.currentUser$ = this.authService.currentUser$;
+  }
+
+  togglePasswordVisibility() {
+    this.hidePassword = !this.hidePassword;
   }
   
 
