@@ -10,19 +10,16 @@ import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
 import { MatToolbar } from '@angular/material/toolbar';
 
-import { AuthService } from './services/auth.service'; // ✅ Adjust if needed
+import { AuthService } from './services/auth.service'; 
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [
     CommonModule,
-    HttpClientModule,        // ✅ THIS is critical
+    HttpClientModule,       
     RouterOutlet,
     MatIcon,
-    MatMenu,
-    MatMenuTrigger,
-    MatToolbar
   ],
   providers: [AuthService],
   templateUrl: './app.component.html',
